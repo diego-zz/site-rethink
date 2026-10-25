@@ -522,11 +522,20 @@ paginas = [
     page("pg-404", "nao-encontrada", "Página não encontrada", pagina_404),
 ]
 
+# Clientes de exemplo (rascunho): modelo para cadastrar os reais. A grade de
+# logos só mostra clientes publicados, com logo e "uso autorizado" marcado.
+clientes = [
+    {"id": f"cli-exemplo-{l.lower()}", "slug": f"cliente-exemplo-{l.lower()}", "status": "draft", "data": {
+        "title": f"[Cliente {l}]", "site": "https://www.exemplo.com.br", "setor": "[Setor]",
+        "autorizado": False, "exibir_logo": True, "ordem": n}}
+    for n, l in enumerate("ABC", start=1)
+]
+
 # Cases e insights de exemplo ficam em rascunho: servem de modelo para a equipe
 # e não aparecem no site até terem conteúdo real e autorização do cliente.
 cases = [
     {"id": "case-exemplo-a", "slug": "exemplo-midia", "status": "draft", "data": {
-        "title": "[Cliente A]", "setor": "[Setor]", "solucao": "$ref:sol-midia", "periodo": "[mês/ano – mês/ano]",
+        "title": "[Cliente A]", "cliente": "$ref:cli-exemplo-a", "setor": "[Setor]", "solucao": "$ref:sol-midia", "periodo": "[mês/ano – mês/ano]",
         "frase_titulo": "[Frase-título do case: o resultado principal em linguagem simples.]",
         "excerpt": "[Desafio e solução em uma frase.]", "imagem": media("case-varejo.jpg", "[Imagem do projeto — ilustrativa]"),
         "metricas": [{"valor": "[+00%]", "indicador": "[Indicador e período de comparação]"}, {"valor": "[00x]", "indicador": "[Indicador e período de comparação]"}],
@@ -538,11 +547,11 @@ cases = [
         "depoimento": "[Depoimento real do cliente, com autorização por escrito.]", "depoimento_autor": "[Nome] · [Cargo], [Cliente]",
         "destaque": True, "ordem": 1}},
     {"id": "case-exemplo-b", "slug": "exemplo-data-driven", "status": "draft", "data": {
-        "title": "[Cliente B]", "setor": "[Setor]", "solucao": "$ref:sol-dados", "excerpt": "[Desafio e solução em uma frase.]",
+        "title": "[Cliente B]", "cliente": "$ref:cli-exemplo-b", "setor": "[Setor]", "solucao": "$ref:sol-dados", "excerpt": "[Desafio e solução em uma frase.]",
         "imagem": media("case-financeiro.jpg", "[Imagem do projeto — ilustrativa]"),
         "metricas": [{"valor": "[+00%]", "indicador": "[indicador]"}], "ordem": 2}},
     {"id": "case-exemplo-c", "slug": "exemplo-war-room", "status": "draft", "data": {
-        "title": "[Cliente C]", "setor": "[Setor]", "solucao": "$ref:sol-warroom", "excerpt": "[Desafio e solução em uma frase.]",
+        "title": "[Cliente C]", "cliente": "$ref:cli-exemplo-c", "setor": "[Setor]", "solucao": "$ref:sol-warroom", "excerpt": "[Desafio e solução em uma frase.]",
         "imagem": media("case-estudio.jpg", "[Imagem do projeto — ilustrativa]"),
         "metricas": [{"valor": "[+00%]", "indicador": "[indicador]"}], "ordem": 3}},
 ]
@@ -585,7 +594,7 @@ seed = {
     "menus": menus,
     "bylines": [{"id": "byline-roberta", "slug": "roberta-krause", "displayName": "Roberta Krause",
                  "bio": "Sócia-fundadora da Rethink. Publicitária, doutora e mestre em Ciências da Comunicação."}],
-    "content": {"solucoes": sol_entries, "paginas": paginas, "cases": cases, "insights": insights, "dados_empresa": dados_empresa},
+    "content": {"clientes": clientes, "solucoes": sol_entries, "paginas": paginas, "cases": cases, "insights": insights, "dados_empresa": dados_empresa},
 }
 
 out = ROOT / "seed" / "seed.json"

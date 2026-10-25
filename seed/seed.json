@@ -1483,6 +1483,47 @@
 		}
 	],
 	"content": {
+		"clientes": [
+			{
+				"id": "cli-exemplo-a",
+				"slug": "cliente-exemplo-a",
+				"status": "draft",
+				"data": {
+					"title": "[Cliente A]",
+					"site": "https://www.exemplo.com.br",
+					"setor": "[Setor]",
+					"autorizado": false,
+					"exibir_logo": true,
+					"ordem": 1
+				}
+			},
+			{
+				"id": "cli-exemplo-b",
+				"slug": "cliente-exemplo-b",
+				"status": "draft",
+				"data": {
+					"title": "[Cliente B]",
+					"site": "https://www.exemplo.com.br",
+					"setor": "[Setor]",
+					"autorizado": false,
+					"exibir_logo": true,
+					"ordem": 2
+				}
+			},
+			{
+				"id": "cli-exemplo-c",
+				"slug": "cliente-exemplo-c",
+				"status": "draft",
+				"data": {
+					"title": "[Cliente C]",
+					"site": "https://www.exemplo.com.br",
+					"setor": "[Setor]",
+					"autorizado": false,
+					"exibir_logo": true,
+					"ordem": 3
+				}
+			}
+		],
 		"solucoes": [
 			{
 				"id": "sol-dados",
@@ -2674,6 +2715,7 @@
 				"status": "draft",
 				"data": {
 					"title": "[Cliente A]",
+					"cliente": "$ref:cli-exemplo-a",
 					"setor": "[Setor]",
 					"solucao": "$ref:sol-midia",
 					"periodo": "[mês/ano – mês/ano]",
@@ -2783,6 +2825,7 @@
 				"status": "draft",
 				"data": {
 					"title": "[Cliente B]",
+					"cliente": "$ref:cli-exemplo-b",
 					"setor": "[Setor]",
 					"solucao": "$ref:sol-dados",
 					"excerpt": "[Desafio e solução em uma frase.]",
@@ -2808,6 +2851,7 @@
 				"status": "draft",
 				"data": {
 					"title": "[Cliente C]",
+					"cliente": "$ref:cli-exemplo-c",
 					"setor": "[Setor]",
 					"solucao": "$ref:sol-warroom",
 					"excerpt": "[Desafio e solução em uma frase.]",
