@@ -65,7 +65,8 @@ jobs:
   producao:
     name: Produção
     needs: homologacao
-    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    # Só roda depois da virada do DNS: defina a variável do repositório PRODUCAO_LIBERADA=true.
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && vars.PRODUCAO_LIBERADA == 'true'
     runs-on: ubuntu-latest
     environment:
       name: production

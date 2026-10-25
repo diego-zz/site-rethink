@@ -140,7 +140,7 @@ Os cases e o insight de exemplo entram como **rascunho**: servem de modelo e nã
 Hoje `www.rethink.ad` aponta para a Vercel (CNAME `16fdcdd5b01997fb.vercel-dns-017.com`) e a raiz `rethink.ad` tem um registro A `216.198.79.1`. Faça no horário de menor acesso:
 
 1. Cloudflare → `rethink.ad` → *DNS*: **apague** o CNAME `www` da Vercel. O deploy cria o domínio próprio do Worker, e ele não é criado se o nome já tiver um registro.
-2. No GitHub → *Actions* → execução da `main` → **aprove** o job *Produção*. O Worker `rethink-ad-site` passa a responder em `https://www.rethink.ad`.
+2. No GitHub → *Settings* → *Secrets and variables* → *Actions* → aba *Variables*: crie `PRODUCAO_LIBERADA` = `true`. Depois, em *Actions*, rode o *Deploy* da `main` (*Run workflow*) e **aprove** o job *Produção*. O Worker `rethink-ad-site` passa a responder em `https://www.rethink.ad`.
 3. Raiz → www:
    - em *DNS*, troque o registro A `216.198.79.1` por **AAAA `rethink.ad` → `100::` (proxied)**;
    - em *Rules* → *Redirect Rules* → *Create*, regra `rethink-ad-raiz-para-www`: hostname igual a `rethink.ad` → URL dinâmica `concat("https://www.rethink.ad", http.request.uri.path)`, código **301**, preservar a query string.

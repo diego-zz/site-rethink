@@ -20,6 +20,8 @@
 	"kv_namespaces": [
 		{ "binding": "CACHE", "id": "30c35ea758f141a58c0c7660c825e41d" },
 		{ "binding": "INSTAGRAM", "id": "d23666671a7c41f5a91ae32399be2df4" },
+		// Sessões do Astro (login do painel).
+		{ "binding": "SESSION", "id": "b16fb341ce984ebd9ec66b2101d93bfd" },
 	],
 	"send_email": [{ "name": "EMAIL" }],
 	"images": { "binding": "IMAGES" },
@@ -55,6 +57,7 @@
 			"kv_namespaces": [
 				{ "binding": "CACHE", "id": "ad21866934654a4eb6f21b06a3004e21" },
 				{ "binding": "INSTAGRAM", "id": "779150829ec3486db3eaa12a7c531dfd" },
+				{ "binding": "SESSION", "id": "ec1dc9d6329f4c8b87d0212088a7b4a1" },
 			],
 			"send_email": [{ "name": "EMAIL" }],
 			"images": { "binding": "IMAGES" },

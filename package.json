@@ -15,7 +15,7 @@
     "seed:build": "python3 scripts/seed/build-seed.py",
     "seed:validate": "emdash seed seed/seed.json --validate",
     "seed:assets": "node scripts/upload-seed-assets.mjs",
-    "deploy:preview": "astro build && wrangler deploy --env preview",
+    "deploy:preview": "CLOUDFLARE_ENV=preview astro build && wrangler deploy",
     "deploy:production": "astro build && wrangler deploy"
   },
   "dependencies": {
