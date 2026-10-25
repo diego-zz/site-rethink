@@ -148,6 +148,10 @@ const blocosJsonLd = [organizacao, ...jsonld].map((j) => JSON.stringify(j).repla
 		</a>
 		<EmDashBodyEnd page={pageCtx} />
 		<script>
+			import { registrarVisita } from "../lib/atribuicao";
+			registrarVisita();
+		</script>
+		<script>
 			const topo = document.querySelector<HTMLElement>("[data-topo]");
 			if (topo) {
 				let agendado = false;

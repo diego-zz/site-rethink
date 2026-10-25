@@ -1,3 +1,5 @@
+import { lerAtribuicao } from "./atribuicao";
+
 /**
  * Comportamento do formulário de contato no navegador:
  * validação acessível, Turnstile, envio e estado de sucesso.
@@ -104,7 +106,7 @@ export function iniciarFormularios() {
 				const r = await fetch(form.dataset.endpoint!, {
 					method: "POST",
 					headers: { "Content-Type": "application/json", Accept: "application/json" },
-					body: JSON.stringify({ ...dados, consentimento: dados.consentimento === "on" }),
+					body: JSON.stringify({ ...dados, consentimento: dados.consentimento === "on", atribuicao: lerAtribuicao() }),
 				});
 				const json = (await r.json().catch(() => ({}))) as { data?: { ok?: boolean; erro?: string } };
 				const res = json.data;

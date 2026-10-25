@@ -16,6 +16,7 @@ import type { PluginContext, ResolvedPlugin, RouteContext, StorageCollection } f
 import { definePlugin } from "emdash";
 import { CAPACIDADES, ID } from "./constantes.mjs";
 import { env } from "./env";
+import { CANAIS, lerOrigem, resumoToque, type OrigemContato } from "./origem";
 
 export interface Contato {
 	nome: string;
@@ -31,6 +32,10 @@ export interface Contato {
 	status: "novo" | "respondido";
 	respondidoEm?: string;
 	pais?: string | null;
+	/** Canal de aquisição (último toque) — ex.: Mídia paga, Busca orgânica. */
+	canal?: string;
+	/** Origem completa: primeiro e último toque, UTMs, cliques, referência e páginas. */
+	atribuicao?: OrigemContato;
 }
 
 const TEXTO_CONSENTIMENTO =
@@ -102,6 +107,10 @@ async function avisarPorEmail(ctx: PluginContext, c: Contato) {
 		["Telefone", c.telefone],
 		["Solução de interesse", c.solucao || "Ainda não sabe — quer um diagnóstico"],
 		["Enviado de", c.origem],
+		["Canal", c.atribuicao ? `${c.atribuicao.canal} — ${c.atribuicao.detalhe}` : undefined],
+		["Último toque", resumoToque(c.atribuicao?.ultimo) || undefined],
+		["Primeiro toque", resumoToque(c.atribuicao?.primeiro) || undefined],
+		["Páginas vistas", c.atribuicao?.paginas?.join(" → ") || undefined],
 		["Recebido em", dataBR(c.recebidoEm)],
 	];
 	const texto = [
@@ -169,6 +178,8 @@ async function enviar(ctx: RouteContext) {
 		status: "novo",
 		pais: ctx.requestMeta?.geo?.country ?? null,
 	};
+	const origem = lerOrigem(i.atribuicao);
+	Object.assign(c, { canal: origem.canal, atribuicao: origem });
 	if (!c.nome || !c.empresa || !EMAIL_RE.test(c.email) || c.mensagem.length < 2 || i.consentimento !== true) {
 		return { ok: false, erro: "INVALIDO" };
 	}
@@ -224,8 +235,22 @@ function blocoContato(id: string, c: Contato): Bloco {
 					{ label: "Status", value: c.status === "novo" ? "Novo" : `Respondido em ${dataBR(c.respondidoEm)}` },
 					{ label: "Enviado de", value: c.origem || "—" },
 					{ label: "País", value: c.pais || "—" },
+					{ label: "Canal", value: c.atribuicao ? `${c.atribuicao.canal} — ${c.atribuicao.detalhe}` : "—" },
 				],
 			},
+			...(c.atribuicao
+				? [
+						{
+							type: "fields",
+							fields: [
+								{ label: "Último toque", value: resumoToque(c.atribuicao.ultimo) || "—" },
+								{ label: "Primeiro toque", value: resumoToque(c.atribuicao.primeiro) || "—" },
+								{ label: "Páginas vistas", value: c.atribuicao.paginas?.join(" → ") || "—" },
+								{ label: "GA client id", value: c.atribuicao.ga_client_id || "—" },
+							],
+						},
+					]
+				: []),
 			{ type: "section", text: c.mensagem.slice(0, 4000) },
 			{ type: "context", text: `Consentimento registrado: “${c.consentimentoTexto}”` },
 			{
@@ -259,6 +284,16 @@ function blocoContato(id: string, c: Contato): Bloco {
 	};
 }
 
+async function porCanal(ctx: PluginContext): Promise<Bloco> {
+	const col = colecao(ctx);
+	const desde = new Date(Date.now() - 30 * 86400_000).toISOString();
+	const n = await Promise.all(CANAIS.map((canal) => col.count({ canal, recebidoEm: { gte: desde } })));
+	const itens = CANAIS.map((canal, i) => ({ label: canal, value: String(n[i]) })).filter((x) => x.value !== "0");
+	return itens.length
+		? { type: "fields", fields: itens.map((x) => ({ label: `${x.label} (30 dias)`, value: x.value })) }
+		: { type: "context", text: "Sem contatos com origem registrada nos últimos 30 dias." };
+}
+
 async function pagina(ctx: PluginContext, opts: { cursor?: string; filtro?: string; toast?: Bloco } = {}) {
 	const col = colecao(ctx);
 	const [r, s] = await Promise.all([
@@ -280,6 +315,7 @@ async function pagina(ctx: PluginContext, opts: { cursor?: string; filtro?: stri
 				{ label: "Total guardado", value: String(s.total) },
 			],
 		},
+		await porCanal(ctx),
 		{
 			type: "actions",
 			elements: [
@@ -328,14 +364,24 @@ const csvCampo = (v: unknown) => `"${String(v ?? "").replace(/"/g, '""').replace
 
 async function gerarCsv(ctx: PluginContext) {
 	const col = colecao(ctx);
-	const linhas = ["recebido_em;status;nome;empresa;email;telefone;solucao;origem;mensagem"];
+	const linhas = [
+		"recebido_em;status;nome;empresa;email;telefone;solucao;pagina_envio;canal;detalhe_canal;utm_source;utm_medium;utm_campaign;utm_term;utm_content;gclid;fbclid;msclkid;li_fat_id;referencia;pagina_entrada;primeiro_toque;paginas_vistas;ga_client_id;mensagem",
+	];
 	let cursor: string | undefined;
 	let n = 0;
 	do {
 		const r = await col.query({ orderBy: { recebidoEm: "desc" }, limit: 100, cursor });
 		for (const { data: c } of r.items) {
 			linhas.push(
-				[dataBR(c.recebidoEm), c.status, c.nome, c.empresa, c.email, c.telefone, c.solucao, c.origem, c.mensagem]
+				[
+					dataBR(c.recebidoEm), c.status, c.nome, c.empresa, c.email, c.telefone, c.solucao, c.origem,
+					c.atribuicao?.canal, c.atribuicao?.detalhe,
+					c.atribuicao?.ultimo?.utm.utm_source, c.atribuicao?.ultimo?.utm.utm_medium, c.atribuicao?.ultimo?.utm.utm_campaign,
+					c.atribuicao?.ultimo?.utm.utm_term, c.atribuicao?.ultimo?.utm.utm_content,
+					c.atribuicao?.ultimo?.cliques.gclid, c.atribuicao?.ultimo?.cliques.fbclid, c.atribuicao?.ultimo?.cliques.msclkid,
+					c.atribuicao?.ultimo?.cliques.li_fat_id, c.atribuicao?.ultimo?.referencia, c.atribuicao?.ultimo?.entrada,
+					resumoToque(c.atribuicao?.primeiro), c.atribuicao?.paginas?.join(" > "), c.atribuicao?.ga_client_id, c.mensagem,
+				]
 					.map(csvCampo)
 					.join(";"),
 			);
@@ -440,7 +486,7 @@ export function createPlugin(): ResolvedPlugin {
 		version: "1.0.0",
 		capabilities: CAPACIDADES as ResolvedPlugin["capabilities"],
 		storage: {
-			contatos: { indexes: ["recebidoEm", "status", "email", ["status", "recebidoEm"]] },
+			contatos: { indexes: ["recebidoEm", "status", "email", "canal", ["status", "recebidoEm"], ["canal", "recebidoEm"]] },
 		},
 		hooks: {
 			"plugin:activate": async (_e, ctx) => {

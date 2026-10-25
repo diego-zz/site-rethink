@@ -2428,7 +2428,7 @@
 										{
 											"_type": "span",
 											"_key": "s0042",
-											"text": "[Formulário de contato: nome, empresa, e-mail, telefone (opcional), solução de interesse e mensagem. Dados de navegação, conforme o consentimento de cookies.]",
+											"text": "[Formulário de contato: nome, empresa, e-mail, telefone (opcional), solução de interesse e mensagem. Junto com o envio, a origem da visita: site de referência, parâmetros de campanha (UTM) e identificadores de clique de anúncios. Dados de navegação, conforme o consentimento de cookies.]",
 											"marks": []
 										}
 									]

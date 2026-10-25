@@ -23,6 +23,7 @@ Site institucional da Rethink Consultoria em **Astro 7 + EmDash 1.3 (CMS)**, hos
 - **Dados da empresa** (item “rethink”): e-mail, WhatsApp, endereço, redes, CNPJ, barra de aviso no topo, faixas finais e descrição para buscadores/IAs.
 - **Menus** (principal, rodapé, legais), **Configurações** (título, SEO, verificação do Google/Bing) e o painel **SEO** de cada página.
 - **Contatos** (menu Plugins → Contatos): mensagens do formulário, marcar como respondido, excluir, excluir por e-mail (pedido do titular) e exportar CSV.
+  Cada contato guarda a origem: canal (mídia paga, busca orgânica, assistente de IA, social, e-mail, referência/parceiro, campanha UTM ou direto), UTMs, `gclid`/`fbclid`/`msclkid`/`li_fat_id`, site de referência, primeiro e último toque, página de entrada e páginas vistas. Sem consentimento de cookies a origem vale só para a sessão; com consentimento, o primeiro toque é lembrado por 90 dias.
 
 Ficam no código apenas rótulos de interface (ex.: “Trilha”, “Compartilhar”, “Resultados”).
 

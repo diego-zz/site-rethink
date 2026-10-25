@@ -484,7 +484,7 @@ pagina_contato = [
 
 PRIV = [
     ("h2", "1. Quem somos"), "[Razão social, CNPJ e endereço da Rethink Consultoria como controladora dos dados.]",
-    ("h2", "2. Dados que coletamos"), "[Formulário de contato: nome, empresa, e-mail, telefone (opcional), solução de interesse e mensagem. Dados de navegação, conforme o consentimento de cookies.]",
+    ("h2", "2. Dados que coletamos"), "[Formulário de contato: nome, empresa, e-mail, telefone (opcional), solução de interesse e mensagem. Junto com o envio, a origem da visita: site de referência, parâmetros de campanha (UTM) e identificadores de clique de anúncios. Dados de navegação, conforme o consentimento de cookies.]",
     ("h2", "3. Para que usamos"), "[Responder ao contato e, se autorizado, enviar conteúdos. Melhorar o site com métricas agregadas.]",
     ("h2", "4. Base legal"), "[Hipóteses legais aplicáveis a cada finalidade — a definir com o jurídico.]",
     ("h2", "5. Compartilhamento"), "[Operadores envolvidos — ex.: Cloudflare (hospedagem, e-mail) e Google (métricas, com consentimento) — e transferência internacional.]",
