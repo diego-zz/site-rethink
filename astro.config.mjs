@@ -11,6 +11,12 @@ export default defineConfig({
 	output: "server",
 	adapter: cloudflare(),
 	trailingSlash: "never",
+	// Idioma do conteúdo no CMS. Para ter versão em inglês no futuro, inclua "en" em locales.
+	i18n: {
+		defaultLocale: "pt-br",
+		locales: ["pt-br"],
+		routing: { prefixDefaultLocale: false },
+	},
 	image: {
 		layout: "constrained",
 		responsiveStyles: true,
