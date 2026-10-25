@@ -93,6 +93,29 @@ const contato = itens.find((i) => i.url === "/contato")?.url ?? "/contato";
 </dialog>
 
 <script>
+	// Sombra leve no cabeçalho fixo depois que a página começa a rolar.
+	const cabecalho = document.querySelector<HTMLElement>(".cabecalho");
+	if (cabecalho) {
+		let agendado = false;
+		const marcar = () => {
+			agendado = false;
+			cabecalho.classList.toggle("cabecalho--rolado", window.scrollY > 8);
+		};
+		addEventListener(
+			"scroll",
+			() => {
+				if (!agendado) {
+					agendado = true;
+					requestAnimationFrame(marcar);
+				}
+			},
+			{ passive: true },
+		);
+		marcar();
+	}
+</script>
+
+<script>
 	const dialog = document.getElementById("menu-mobile") as HTMLDialogElement | null;
 	const abrir = document.querySelector<HTMLButtonElement>(".cabecalho__abrir");
 	const fechar = dialog?.querySelector<HTMLButtonElement>(".menu__fechar");
@@ -133,8 +156,15 @@ const contato = itens.find((i) => i.url === "/contato")?.url ?? "/contato";
 		text-decoration: underline;
 	}
 	.cabecalho {
+		position: sticky;
+		top: 0;
+		z-index: 60;
 		background: var(--papel);
 		border-bottom: 1px solid var(--linha);
+		transition: box-shadow 0.2s ease;
+	}
+	.cabecalho.cabecalho--rolado {
+		box-shadow: 0 6px 24px rgb(0 0 0 / 0.08);
 	}
 	.cabecalho__barra {
 		display: flex;

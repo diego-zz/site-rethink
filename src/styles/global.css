@@ -29,12 +29,20 @@
 	--largura: 1280px;
 	--gutter: 24px;
 	--secao: 120px;
+	/* Altura do cabeçalho fixo (âncoras e índices descontam esse espaço). */
+	--altura-cabecalho: 77px;
 
 	--h1: clamp(56px, 9vw, 136px);
 	--h2: clamp(40px, 5vw, 64px);
 	--h-cta: clamp(48px, 7vw, 104px);
 
 	color-scheme: light;
+}
+
+@media (max-width: 960px) {
+	:root {
+		--altura-cabecalho: 65px;
+	}
 }
 
 @media (max-width: 720px) {
@@ -56,7 +64,7 @@
 html {
 	-webkit-text-size-adjust: 100%;
 	scroll-behavior: smooth;
-	scroll-padding-top: 24px;
+	scroll-padding-top: calc(var(--altura-cabecalho) + 24px);
 }
 
 body {
