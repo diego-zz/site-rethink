@@ -1,0 +1,52 @@
+---
+import { Image } from "emdash/ui";
+import type { Dados } from "../../lib/site";
+
+interface Props {
+	value: Dados;
+}
+const { value: v } = Astro.props;
+---
+
+{
+	v.imagem && (
+		<section class:list={["bloco-imagem", { "bloco-imagem--total": v.largura_total }]} aria-label={v.legenda || v.imagem.alt || "Imagem"}>
+			<figure class:list={{ container: !v.largura_total }}>
+				<Image image={v.imagem} sizes={v.largura_total ? "100vw" : "(max-width: 1280px) 100vw, 1232px"} />
+				{v.legenda && <figcaption>{v.legenda}</figcaption>}
+			</figure>
+		</section>
+	)
+}
+
+<style>
+	.bloco-imagem {
+		padding-top: 64px;
+	}
+	figure {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+	}
+	figure :global(img) {
+		width: 100%;
+		height: 560px;
+		object-fit: cover;
+	}
+	figcaption {
+		font-family: var(--f-mono);
+		font-size: 12px;
+		color: var(--cinza);
+	}
+	.bloco-imagem--total figcaption {
+		padding-inline: var(--gutter);
+	}
+	@media (max-width: 720px) {
+		.bloco-imagem {
+			padding-top: 32px;
+		}
+		figure :global(img) {
+			height: 280px;
+		}
+	}
+</style>

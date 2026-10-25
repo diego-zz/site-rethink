@@ -1,0 +1,178 @@
+---
+/** Case em destaque + cases recentes, sobre fundo preto. */
+import { Image } from "emdash/ui";
+import CardCase from "../CardCase.astro";
+import Linhas from "../Linhas.astro";
+import { cachear, getCases, getClientes, getSolucoes, indice, nomeCliente, refId, type Dados } from "../../lib/site";
+
+interface Props {
+	value: Dados;
+}
+const { value: v } = Astro.props;
+const [{ cases, cacheHint }, cl, so] = await Promise.all([getCases(), getClientes(), getSolucoes()]);
+cachear(Astro, cacheHint, cl.cacheHint, so.cacheHint);
+const clientes = indice(cl.todos);
+const solucoes = indice(so.solucoes);
+const destaque = cases.find((c) => c.data.destaque) ?? cases[0];
+const outros = cases.filter((c) => c !== destaque).slice(0, Number(v.quantidade) || 3);
+const solNome = (c: Dados) => solucoes.get(refId(c.data.solucao) ?? "")?.data.title as string | undefined;
+const id = `h-${v._key}`;
+const metricas: Dados[] = destaque && Array.isArray(destaque.data.metricas) ? destaque.data.metricas.slice(0, 2) : [];
+---
+
+{
+	destaque && (
+		<section id="cases" aria-labelledby={id} class="escuro">
+			<div class="container secao pilha-48">
+				<div class="cab-secao">
+					<div class="pilha">
+						{v.rotulo && <span class="rotulo">{v.rotulo}</span>}
+						<h2 id={id} class="titulo-2">
+							<Linhas texto={v.titulo || "Cases"} />
+						</h2>
+					</div>
+					{v.botao_texto && (
+						<a href="/cases" class="botao botao--contorno">
+							{v.botao_texto}
+						</a>
+					)}
+				</div>
+
+				<article class="destaque">
+					<div class="destaque__img">
+						{destaque.data.imagem && <Image image={destaque.data.imagem} sizes="(max-width: 960px) 100vw, 55vw" />}
+					</div>
+					<div class="destaque__texto">
+						<span class="destaque__meta">
+							Case em destaque{destaque.data.setor && ` · ${destaque.data.setor}`}
+						</span>
+						<h3 class="display destaque__nome">{nomeCliente(destaque, clientes)}</h3>
+						{(destaque.data.frase_titulo || destaque.data.excerpt) && (
+							<p>{destaque.data.frase_titulo || destaque.data.excerpt}</p>
+						)}
+						{metricas.length > 0 && (
+							<div class="destaque__metricas">
+								{metricas.map((m) => (
+									<div>
+										<span class="destaque__valor">{m.valor}</span>
+										<span class="destaque__ind">{m.indicador}</span>
+									</div>
+								))}
+							</div>
+						)}
+						<a href={`/cases/${destaque.id}`} class="link-mono destaque__link">
+							Ler o case <span aria-hidden="true">→</span>
+						</a>
+					</div>
+				</article>
+
+				{outros.length > 0 && (
+					<div class="outros">
+						{outros.map((c) => (
+							<CardCase caso={c} cliente={nomeCliente(c, clientes)} solucao={solNome(c)} variante="escuro" />
+						))}
+					</div>
+				)}
+			</div>
+		</section>
+	)
+}
+
+<style>
+	.pilha-48 {
+		display: flex;
+		flex-direction: column;
+		gap: 48px;
+	}
+	.destaque {
+		display: flex;
+		flex-wrap: wrap;
+		background: var(--branco);
+		color: var(--texto);
+	}
+	.destaque__img {
+		flex: 1 1 520px;
+		min-height: 440px;
+		position: relative;
+		background: var(--linha);
+	}
+	.destaque__img :global(img) {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+	.destaque__texto {
+		flex: 1 1 420px;
+		display: flex;
+		flex-direction: column;
+		gap: 18px;
+		padding: 48px;
+	}
+	.destaque__meta {
+		font-family: var(--f-mono);
+		font-size: 12px;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		color: var(--cinza);
+	}
+	.destaque__nome {
+		font-size: 40px;
+		line-height: 0.95;
+		color: var(--preto);
+	}
+	.destaque__texto p {
+		font-size: 16px;
+	}
+	.destaque__metricas {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 16px;
+		padding-top: 18px;
+		border-top: 1px solid var(--linha);
+	}
+	.destaque__metricas div {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+	}
+	.destaque__valor {
+		font-family: var(--f-mono);
+		font-size: 36px;
+		line-height: 1;
+		color: var(--azul);
+	}
+	.destaque__ind {
+		font-size: 13px;
+		color: var(--cinza);
+	}
+	.destaque__link {
+		color: var(--preto) !important;
+	}
+	.outros {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+		gap: 24px;
+	}
+	@media (max-width: 720px) {
+		.pilha-48 {
+			gap: 32px;
+		}
+		.destaque__img {
+			min-height: 240px;
+		}
+		.destaque__texto {
+			padding: 24px 20px;
+		}
+		.destaque__nome {
+			font-size: 32px;
+		}
+		.destaque__valor {
+			font-size: 28px;
+		}
+		.outros {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>

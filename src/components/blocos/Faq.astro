@@ -1,0 +1,98 @@
+---
+/** Perguntas frequentes (<details>) + FAQPage em JSON-LD. */
+import Linhas from "../Linhas.astro";
+import type { Dados } from "../../lib/site";
+
+interface Props {
+	value: Dados;
+	/** Uso fora do bloco (página de solução). */
+	perguntas?: Dados[];
+}
+const { value: v } = Astro.props;
+const perguntas: Dados[] = (Astro.props.perguntas ?? v.perguntas ?? []).filter((p: Dados) => p?.pergunta && p?.resposta);
+const id = `h-${v._key ?? "faq"}`;
+const jsonld = {
+	"@context": "https://schema.org",
+	"@type": "FAQPage",
+	mainEntity: perguntas.map((p) => ({
+		"@type": "Question",
+		name: p.pergunta,
+		acceptedAnswer: { "@type": "Answer", text: p.resposta },
+	})),
+};
+---
+
+{
+	perguntas.length > 0 && (
+		<section aria-labelledby={id}>
+			<div class="container secao duas-colunas">
+				<div class="pilha faq__cab">
+					{v.rotulo && <span class="rotulo">{v.rotulo}</span>}
+					<h2 id={id} class="titulo-2">
+						<Linhas texto={v.titulo || "Dúvidas."} />
+					</h2>
+				</div>
+				<div class="faq__lista">
+					{perguntas.map((p) => (
+						<details>
+							<summary>{p.pergunta}</summary>
+							<p>{p.resposta}</p>
+						</details>
+					))}
+				</div>
+			</div>
+		</section>
+		<script type="application/ld+json" set:html={JSON.stringify(jsonld).replace(/</g, "\\u003c")} />
+	)
+}
+
+<style>
+	.faq__cab {
+		flex: 1 1 320px !important;
+	}
+	.faq__lista {
+		flex: 2 1 560px !important;
+		display: flex;
+		flex-direction: column;
+		border-top: 1px solid var(--preto);
+	}
+	details {
+		padding: 24px 0;
+		border-bottom: 1px solid var(--linha);
+	}
+	summary {
+		display: flex;
+		justify-content: space-between;
+		gap: 16px;
+		font-size: 19px;
+		font-weight: 600;
+		color: var(--preto);
+		cursor: pointer;
+		list-style: none;
+	}
+	summary::-webkit-details-marker {
+		display: none;
+	}
+	summary::after {
+		content: "+";
+		font-family: var(--f-mono);
+		font-weight: 400;
+		font-size: 22px;
+		line-height: 1;
+	}
+	details[open] summary::after {
+		content: "−";
+	}
+	details p {
+		margin-top: 16px;
+		white-space: pre-line;
+	}
+	@media (max-width: 720px) {
+		summary {
+			font-size: 17px;
+		}
+		details {
+			padding: 18px 0;
+		}
+	}
+</style>

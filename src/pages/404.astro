@@ -1,0 +1,26 @@
+---
+/** Página 404: conteúdo editável na página "nao-encontrada" do CMS. */
+import { getEmDashEntry } from "emdash";
+import Base from "../layouts/Base.astro";
+import PaginaCMS from "../components/PaginaCMS.astro";
+import type { Entrada } from "../lib/site";
+
+Astro.response.status = 404;
+const { entry } = await getEmDashEntry("paginas", "nao-encontrada");
+const pagina = entry as unknown as Entrada | null;
+---
+
+<Base title="Página não encontrada" robots="noindex, follow">
+	{
+		pagina ? (
+			<PaginaCMS pagina={pagina} />
+		) : (
+			<section class="container secao">
+				<h1 class="titulo-1">Página não encontrada.</h1>
+				<p class="lead">
+					<a href="/">Ir para o início</a>
+				</p>
+			</section>
+		)
+	}
+</Base>

@@ -1,0 +1,315 @@
+---
+/**
+ * Chamada de contato: canais (Dados da empresa) + formulário.
+ * O formulário envia para o plugin rethink-ad-contatos, que guarda o
+ * contato no painel e avisa por e-mail. Protegido por Turnstile.
+ */
+import { env } from "cloudflare:workers";
+import Linhas from "../Linhas.astro";
+import { cachear, getEmpresa, getSolucoes, link, marcador, urlWhatsapp, type Dados } from "../../lib/site";
+import { ENDPOINT_CONTATO } from "../../lib/contato";
+
+interface Props {
+	value: Dados;
+}
+const { value: v } = Astro.props;
+const [{ empresa, cacheHint }, so] = await Promise.all([getEmpresa(), getSolucoes()]);
+cachear(Astro, cacheHint, so.cacheHint);
+const siteKey = (env as unknown as Record<string, string | undefined>).PUBLIC_TURNSTILE_SITE_KEY?.trim();
+const id = `h-${v._key}`;
+const Titulo = v.titulo_pagina ? "h1" : "h2";
+const email = !marcador(empresa.email) ? String(empresa.email).trim() : undefined;
+const whats = urlWhatsapp(empresa);
+const linkedin = link(empresa.linkedin_url);
+const instagram = link(empresa.instagram_url);
+const perfilIg = !marcador(empresa.instagram_perfil) ? empresa.instagram_perfil : undefined;
+const endereco = [empresa.endereco, [empresa.cidade, empresa.uf].filter(Boolean).join("/")].filter(Boolean).join(" — ");
+const canais = [
+	email && { rotulo: "E-mail", texto: email, url: `mailto:${email}` },
+	whats && { rotulo: "WhatsApp", texto: empresa.whatsapp, url: whats },
+	linkedin && !/linkedin\.com\/?$/.test(linkedin) && { rotulo: "LinkedIn", texto: linkedin.replace(/^https?:\/\/(www\.)?linkedin\.com/, ""), url: linkedin },
+	instagram && !/instagram\.com\/?$/.test(instagram) && { rotulo: "Instagram", texto: perfilIg || "Instagram", url: instagram },
+	endereco && { rotulo: "Endereço", texto: endereco },
+].filter(Boolean) as { rotulo: string; texto: string; url?: string }[];
+const origem = Astro.url.pathname;
+---
+
+<section id={v.ancora || undefined} aria-labelledby={id} class:list={["contato", { "contato--pagina": v.titulo_pagina }]}>
+	<div class="container contato__corpo">
+		<div class="contato__intro">
+			{v.rotulo && <span class="rotulo">{v.rotulo}</span>}
+			<Titulo id={id} class="display contato__titulo"><Linhas texto={v.titulo} /></Titulo>
+			{v.introducao && <p class="contato__texto">{v.introducao}</p>}
+			{
+				v.mostrar_canais !== false && canais.length > 0 && (
+					<dl class="canais">
+						{canais.map((c) => (
+							<>
+								<dt class="mono-caps">{c.rotulo}</dt>
+								<dd>
+									{c.url ? (
+										<a href={c.url} target={c.url.startsWith("http") ? "_blank" : undefined} rel="noopener noreferrer">
+											{c.texto}
+										</a>
+									) : (
+										c.texto
+									)}
+								</dd>
+							</>
+						))}
+					</dl>
+				)
+			}
+		</div>
+
+		{
+			v.mostrar_formulario !== false && (
+				<div class="contato__caixa">
+					<form class="form" data-contato data-endpoint={ENDPOINT_CONTATO} novalidate>
+						<div class="form__linha">
+							<div class="campo">
+								<label for={`${id}-nome`}>Nome *</label>
+								<input id={`${id}-nome`} name="nome" type="text" autocomplete="name" required maxlength="120" />
+							</div>
+							<div class="campo">
+								<label for={`${id}-empresa`}>Empresa *</label>
+								<input id={`${id}-empresa`} name="empresa" type="text" autocomplete="organization" required maxlength="160" />
+							</div>
+						</div>
+						<div class="form__linha">
+							<div class="campo">
+								<label for={`${id}-email`}>E-mail corporativo *</label>
+								<input id={`${id}-email`} name="email" type="email" autocomplete="email" required maxlength="160" />
+							</div>
+							<div class="campo">
+								<label for={`${id}-tel`}>Telefone (opcional)</label>
+								<input id={`${id}-tel`} name="telefone" type="tel" autocomplete="tel" maxlength="40" />
+							</div>
+						</div>
+						{so.solucoes.length > 0 && (
+							<div class="campo">
+								<label for={`${id}-sol`}>Solução de interesse</label>
+								<select id={`${id}-sol`} name="solucao">
+									<option value="">Ainda não sei — quero um diagnóstico</option>
+									{so.solucoes.map((s) => (
+										<option value={s.data.title}>{s.data.title}</option>
+									))}
+								</select>
+							</div>
+						)}
+						<div class="campo">
+							<label for={`${id}-msg`}>O que você quer repensar? *</label>
+							<textarea id={`${id}-msg`} name="mensagem" rows="4" required maxlength="4000"></textarea>
+						</div>
+						<div class="form__mel" aria-hidden="true">
+							<label for={`${id}-site`}>Não preencha</label>
+							<input id={`${id}-site`} name="site" type="text" tabindex="-1" autocomplete="off" />
+						</div>
+						<input type="hidden" name="origem" value={origem} />
+						<div class="form__lgpd">
+							<input id={`${id}-lgpd`} name="consentimento" type="checkbox" required />
+							<label for={`${id}-lgpd`}>
+								Concordo com o uso dos meus dados para retorno deste contato, conforme a <a href="/privacidade">Política de Privacidade</a>.
+							</label>
+						</div>
+						{siteKey && <div class="form__turnstile" data-turnstile data-sitekey={siteKey}></div>}
+						<p class="form__erro" role="alert" hidden data-erro></p>
+						<div class="form__acoes">
+							<button type="submit" class="botao">
+								Enviar mensagem <span aria-hidden="true">→</span>
+							</button>
+							{siteKey && <span class="form__selo">Protegido por Cloudflare Turnstile</span>}
+						</div>
+						<noscript>
+							<p class="form__erro">Para enviar pelo formulário, ative o JavaScript{email && <> — ou escreva para <a href={`mailto:${email}`}>{email}</a></>}.</p>
+						</noscript>
+					</form>
+					<div class="sucesso" role="status" hidden data-sucesso tabindex="-1">
+						<span class="rotulo">Mensagem enviada</span>
+						<span class="display sucesso__titulo">Obrigado.<br />Já estamos<br />repensando.</span>
+						<span>Recebemos seu contato e vamos responder no e-mail informado.</span>
+						<div class="botoes">
+							<a href="/cases" class="botao botao--contorno">Ver cases enquanto isso</a>
+							<button type="button" class="sucesso__outra" data-outra>Enviar outra mensagem</button>
+						</div>
+					</div>
+				</div>
+			)
+		}
+	</div>
+</section>
+
+{siteKey && <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>}
+
+<script>
+	import { iniciarFormularios } from "../../lib/contato-cliente";
+	iniciarFormularios();
+</script>
+
+<style>
+	.contato {
+		background: var(--branco);
+		border-top: 1px solid var(--preto);
+	}
+	.contato--pagina {
+		background: transparent;
+		border-top: 0;
+	}
+	.contato__corpo {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 64px 96px;
+		padding-block: var(--secao);
+	}
+	.contato--pagina .contato__corpo {
+		padding-top: 56px;
+	}
+	.contato__intro {
+		flex: 1 1 380px;
+		display: flex;
+		flex-direction: column;
+		gap: 24px;
+	}
+	.contato__titulo {
+		font-size: clamp(48px, 6vw, 88px);
+		line-height: 0.9;
+	}
+	.contato--pagina .contato__titulo {
+		font-size: clamp(56px, 8vw, 120px);
+		line-height: 0.88;
+		letter-spacing: -0.02em;
+	}
+	.contato__texto {
+		max-width: 460px;
+		font-size: 18px;
+	}
+	.canais {
+		display: grid;
+		grid-template-columns: max-content 1fr;
+		gap: 12px 24px;
+		padding-top: 24px;
+		border-top: 1px solid var(--preto);
+		font-size: 16px;
+	}
+	.canais dt {
+		padding-top: 3px;
+	}
+	.canais dd {
+		overflow-wrap: anywhere;
+	}
+	.contato__caixa {
+		flex: 1 1 480px;
+	}
+	.contato--pagina .contato__caixa {
+		background: var(--branco);
+		border: 1px solid var(--linha);
+		padding: 48px;
+	}
+	.form {
+		display: flex;
+		flex-direction: column;
+		gap: 28px;
+	}
+	.form__linha {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+		gap: 28px;
+	}
+	.form__mel {
+		position: absolute;
+		left: -10000px;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+	}
+	.form__lgpd {
+		display: flex;
+		gap: 12px;
+		align-items: flex-start;
+		font-size: 14px;
+		color: var(--cinza);
+	}
+	.form__lgpd input {
+		flex: 0 0 20px;
+		width: 20px;
+		height: 20px;
+		margin: 2px 0 0;
+		accent-color: var(--preto);
+	}
+	.form__erro {
+		padding: 12px 16px;
+		border-left: 3px solid #b3261e;
+		background: #fdf1f0;
+		color: #6b1510;
+		font-size: 15px;
+	}
+	.form__erro[hidden] {
+		display: none;
+	}
+	.form__acoes {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 16px;
+		align-items: center;
+		justify-content: space-between;
+	}
+	.form__acoes .botao[disabled] {
+		opacity: 0.6;
+		cursor: progress;
+	}
+	.form__selo {
+		font-family: var(--f-mono);
+		font-size: 11px;
+		color: var(--cinza);
+	}
+	.sucesso {
+		display: flex;
+		flex-direction: column;
+		gap: 20px;
+		min-height: 480px;
+		justify-content: center;
+	}
+	.sucesso[hidden] {
+		display: none;
+	}
+	.sucesso__titulo {
+		font-size: 56px;
+		line-height: 0.9;
+	}
+	.sucesso__outra {
+		min-height: 48px;
+		padding: 0 8px;
+		border: 0;
+		background: none;
+		color: var(--azul);
+		font: inherit;
+		font-size: 15px;
+		text-decoration: underline;
+		cursor: pointer;
+	}
+	@media (max-width: 720px) {
+		.contato__corpo {
+			gap: 40px;
+		}
+		.contato--pagina .contato__corpo {
+			padding-top: 24px;
+		}
+		.contato--pagina .contato__caixa {
+			padding: 24px 20px;
+			margin-inline: calc(-1 * var(--gutter) + 0px);
+		}
+		.canais {
+			grid-template-columns: 1fr;
+			gap: 2px;
+		}
+		.canais dd + dt {
+			margin-top: 12px;
+		}
+		.sucesso {
+			min-height: 360px;
+		}
+		.sucesso__titulo {
+			font-size: 44px;
+		}
+	}
+</style>

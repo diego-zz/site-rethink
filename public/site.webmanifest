@@ -1,0 +1,13 @@
+{
+	"name": "Rethink Consultoria",
+	"short_name": "Rethink",
+	"lang": "pt-BR",
+	"start_url": "/",
+	"display": "browser",
+	"background_color": "#F6F8F6",
+	"theme_color": "#000000",
+	"icons": [
+		{ "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+		{ "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" }
+	]
+}

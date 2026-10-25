@@ -1,0 +1,76 @@
+---
+import Linhas from "../Linhas.astro";
+import type { Dados } from "../../lib/site";
+
+interface Props {
+	value: Dados;
+}
+const { value: v } = Astro.props;
+const itens: Dados[] = Array.isArray(v.itens) ? v.itens : [];
+const id = `h-${v._key}`;
+---
+
+<section aria-labelledby={v.titulo ? id : undefined} class="fundo-branco">
+	<div class="container secao pilha-48">
+		<div class="pilha">
+			{v.rotulo && <span class="rotulo">{v.rotulo}</span>}
+			{
+				v.titulo && (
+					<h2 id={id} class="titulo-2">
+						<Linhas texto={v.titulo} />
+					</h2>
+				)
+			}
+		</div>
+		<div class="grade">
+			{
+				itens.map((d, i) => (
+					<article>
+						<span class="num">{String(i + 1).padStart(2, "0")}</span>
+						<h3>{d.titulo}</h3>
+						{d.texto && <p>{d.texto}</p>}
+					</article>
+				))
+			}
+		</div>
+	</div>
+</section>
+
+<style>
+	.pilha-48 {
+		display: flex;
+		flex-direction: column;
+		gap: 48px;
+	}
+	.grade {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+		gap: 32px;
+	}
+	article {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+		padding-top: 24px;
+		border-top: 2px solid var(--preto);
+	}
+	.num {
+		font-family: var(--f-mono);
+		font-size: 13px;
+		color: var(--cinza);
+	}
+	h3 {
+		font-size: 21px;
+		font-weight: 600;
+		color: var(--preto);
+		line-height: 1.3;
+	}
+	p {
+		font-size: 16px;
+	}
+	@media (max-width: 720px) {
+		.pilha-48 {
+			gap: 32px;
+		}
+	}
+</style>

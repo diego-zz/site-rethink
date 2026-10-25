@@ -1,0 +1,34 @@
+---
+import { getContentSeo, getEmDashEntry, getSeoMeta } from "emdash";
+import Base from "../layouts/Base.astro";
+import PaginaCMS from "../components/PaginaCMS.astro";
+import { cachear, padroesHero, type Entrada } from "../lib/site";
+
+const { entry, cacheHint } = await getEmDashEntry("paginas", "home");
+cachear(Astro, cacheHint);
+const origin = Astro.site?.origin ?? Astro.url.origin;
+const pagina = entry as unknown as Entrada | null;
+const seo = entry ? getSeoMeta(entry, { siteUrl: origin, path: "/", ...padroesHero(pagina?.data.conteudo, origin) }) : null;
+// A Home usa o nome do site como título, a não ser que o painel SEO defina outro.
+const titulo = entry ? getContentSeo(entry)?.title || undefined : undefined;
+---
+
+<Base
+	title={titulo}
+	description={seo?.description}
+	image={seo?.ogImage}
+	canonical={`${origin}/`}
+	robots={seo?.robots}
+	content={pagina ? { collection: "paginas", id: pagina.data.id, slug: pagina.id } : undefined}
+>
+	{
+		pagina ? (
+			<PaginaCMS pagina={pagina} />
+		) : (
+			<section class="container secao">
+				<h1 class="titulo-1">Rethink Consultoria</h1>
+				{Astro.locals.user && <p>Publique a página “home” no painel para exibi-la aqui.</p>}
+			</section>
+		)
+	}
+</Base>

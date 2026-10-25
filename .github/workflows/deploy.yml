@@ -1,0 +1,79 @@
+# Integração e deploy contínuos do site da Rethink.
+#  - Pull request: valida (seed, tipos, build) e publica em homologação.
+#  - main: valida, publica em homologação e, após aprovação no ambiente
+#    "production" do GitHub, publica em www.rethink.ad.
+# Segredos do repositório: CLOUDFLARE_API_TOKEN e CLOUDFLARE_ACCOUNT_ID.
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+  CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+jobs:
+  validar:
+    name: Validar
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: corepack enable
+      - run: pnpm install --frozen-lockfile
+      - name: Seed do CMS
+        run: pnpm seed:validate
+      - name: Tipos
+        run: pnpm typecheck
+      - name: Build
+        run: pnpm build
+
+  homologacao:
+    name: Homologação
+    needs: validar
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    environment:
+      name: preview
+      url: https://rethink-ad-site-preview.ddiehl.workers.dev
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: corepack enable
+      - run: pnpm install --frozen-lockfile
+      - name: Imagens iniciais (bucket rethink-ad-assets)
+        run: pnpm seed:assets
+      - name: Deploy em homologação
+        run: pnpm deploy:preview
+
+  producao:
+    name: Produção
+    needs: homologacao
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://www.rethink.ad
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: corepack enable
+      - run: pnpm install --frozen-lockfile
+      - name: Deploy em produção
+        run: pnpm deploy:production

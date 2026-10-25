@@ -1,0 +1,48 @@
+---
+/** Mapeia cada tipo de seção do CMS para o seu componente. */
+import { Blocks } from "emdash/ui";
+import Contato from "./blocos/Contato.astro";
+import CtaFaixa from "./blocos/CtaFaixa.astro";
+import DestaqueCases from "./blocos/DestaqueCases.astro";
+import DestaqueInsights from "./blocos/DestaqueInsights.astro";
+import Diferenciais from "./blocos/Diferenciais.astro";
+import Faq from "./blocos/Faq.astro";
+import Ficha from "./blocos/Ficha.astro";
+import Fundadora from "./blocos/Fundadora.astro";
+import GradeCases from "./blocos/GradeCases.astro";
+import GradeInsights from "./blocos/GradeInsights.astro";
+import Hero from "./blocos/Hero.astro";
+import ImagemLarga from "./blocos/ImagemLarga.astro";
+import Instagram from "./blocos/Instagram.astro";
+import ListaSolucoes from "./blocos/ListaSolucoes.astro";
+import LogosClientes from "./blocos/LogosClientes.astro";
+import Metodologia from "./blocos/Metodologia.astro";
+import TextoDuasColunas from "./blocos/TextoDuasColunas.astro";
+import TextoLongo from "./blocos/TextoLongo.astro";
+
+interface Props {
+	value?: unknown[] | null;
+}
+const componentes = {
+	hero: Hero,
+	logos_clientes: LogosClientes,
+	texto_duas_colunas: TextoDuasColunas,
+	ficha: Ficha,
+	fundadora: Fundadora,
+	imagem_larga: ImagemLarga,
+	lista_solucoes: ListaSolucoes,
+	metodologia: Metodologia,
+	diferenciais: Diferenciais,
+	destaque_cases: DestaqueCases,
+	grade_cases: GradeCases,
+	destaque_insights: DestaqueInsights,
+	grade_insights: GradeInsights,
+	instagram: Instagram,
+	contato: Contato,
+	faq: Faq,
+	cta_faixa: CtaFaixa,
+	texto_longo: TextoLongo,
+};
+---
+
+<Blocks value={(Astro.props.value ?? []) as never} components={componentes as never} />

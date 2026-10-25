@@ -1,0 +1,3021 @@
+{
+	"$schema": "https://emdashcms.com/seed.schema.json",
+	"version": "1",
+	"meta": {
+		"name": "Rethink Consultoria",
+		"description": "Site institucional da Rethink Consultoria",
+		"author": "Bonaparte"
+	},
+	"settings": {
+		"title": "Rethink Consultoria",
+		"tagline": "Inteligência de marketing com resultados",
+		"timezone": "America/Sao_Paulo",
+		"seo": {
+			"titleSeparator": "—",
+			"disallowAiTraining": true
+		}
+	},
+	"blockTypes": [
+		{
+			"slug": "hero",
+			"label": "Abertura (hero)",
+			"description": "Título grande no topo da página, com botões e foto opcional",
+			"category": "Rethink",
+			"currentVersion": 1,
+			"versions": [
+				{
+					"version": 1,
+					"fields": [
+						{
+							"slug": "rotulo",
+							"label": "Rótulo da seção (ex.: 01 — Quem somos)",
+							"type": "string"
+						},
+						{
+							"slug": "titulo",
+							"label": "Título (use Enter para quebrar linha)",
+							"type": "text",
+							"required": true
+						},
+						{
+							"slug": "subtitulo",
+							"label": "Texto de apoio",
+							"type": "text"
+						},
+						{
+							"slug": "cta1_texto",
+							"label": "Botão principal — texto",
+							"type": "string"
+						},
+						{
+							"slug": "cta1_link",
+							"label": "Botão principal — link (começa com /, https://, mailto:, tel: ou #)",
+							"type": "string",
+							"validation": {
+								"pattern": "^(?:$|/|(?:https?://|mailto:|tel:|/(?!/)|#).+)$"
+							}
+						},
+						{
+							"slug": "cta2_texto",
+							"label": "Botão secundário — texto",
+							"type": "string"
+						},
+						{
+							"slug": "cta2_link",
+							"label": "Botão secundário — link (começa com /, https://, mailto:, tel: ou #)",
+							"type": "string",
+							"validation": {
+								"pattern": "^(?:$|/|(?:https?://|mailto:|tel:|/(?!/)|#).+)$"
+							}
+						},
+						{
+							"slug": "imagem",
+							"label": "Foto",
+							"type": "image"
+						},
+						{
+							"slug": "legenda_imagem",
+							"label": "Legenda sobre a foto",
+							"type": "string"
+						},
+						{
+							"slug": "assinatura",
+							"label": "Assinatura sob os botões",
+							"type": "string"
+						},
+						{
+							"slug": "fundo_escuro",
+							"label": "Fundo preto",
+							"type": "boolean",
+							"defaultValue": false
+						},
+						{
+							"slug": "mostrar_trilha",
+							"label": "Mostrar trilha (Início / página)",
+							"type": "boolean",
+							"defaultValue": true
+						}
+					]
+				}
+			]
+		},
+		{
+			"slug": "logos_clientes",
+			"label": "Logos de clientes",
+			"description": "Grade com os logos dos clientes marcados para exibição",
+			"category": "Rethink",
+			"currentVersion": 1,
+			"versions": [
+				{
+					"version": 1,
+					"fields": [
+						{
+							"slug": "rotulo",
+							"label": "Rótulo da seção (ex.: 01 — Quem somos)",
+							"type": "string"
+						},
+						{
+							"slug": "limite",
+							"label": "Quantidade máxima de logos",
+							"type": "integer",
+							"defaultValue": 8
+						}
+					]
+				}
+			]
+		},
+		{
+			"slug": "texto_duas_colunas",
+			"label": "Título + texto",
+			"description": "Título à esquerda e texto à direita, com link opcional",
+			"category": "Rethink",
+			"currentVersion": 1,
+			"versions": [
+				{
+					"version": 1,
+					"fields": [
+						{
+							"slug": "ancora",
+							"label": "Âncora (id da seção, opcional)",
+							"type": "string"
+						},
+						{
+							"slug": "rotulo",
+							"label": "Rótulo da seção (ex.: 01 — Quem somos)",
+							"type": "string"
+						},
+						{
+							"slug": "titulo",
+							"label": "Título (use Enter para quebrar linha)",
+							"type": "text"
+						},
+						{
+							"slug": "texto",
+							"label": "Texto",
+							"type": "portableText"
+						},
+						{
+							"slug": "link_texto",
+							"label": "Link — texto",
+							"type": "string"
+						},
+						{
+							"slug": "link_url",
+							"label": "Link — endereço (começa com /, https://, mailto:, tel: ou #)",
+							"type": "string",
+							"validation": {
+								"pattern": "^(?:$|/|(?:https?://|mailto:|tel:|/(?!/)|#).+)$"
+							}
+						},
+						{
+							"slug": "fundo_branco",
+							"label": "Fundo branco",
+							"type": "boolean",
+							"defaultValue": false
+						}
+					]
+				}
+			]
+		},
+		{
+			"slug": "ficha",
+			"label": "Ficha (dados rápidos)",
+			"description": "Pares rótulo e valor, como Fundação e Sede",
+			"category": "Rethink",
+			"currentVersion": 1,
+			"versions": [
+				{
+					"version": 1,
+					"fields": [
+						{
+							"slug": "itens",
+							"label": "Itens",
+							"type": "repeater",
+							"validation": {
+								"subFields": [
+									{
+										"slug": "rotulo",
+										"label": "Rótulo",
+										"type": "string",
+										"required": true
+									},
+									{
+										"slug": "valor",
+										"label": "Valor",
+										"type": "string",
+										"required": true
+									}
+								],
+								"minItems": 1,
+								"maxItems": 6
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"slug": "fundadora",
+			"label": "Perfil de pessoa",
+			"description": "Foto, nome, trajetória e números de uma pessoa (ex.: sócia-fundadora)",
+			"category": "Rethink",
+			"currentVersion": 1,
+			"versions": [
+				{
+					"version": 1,
+					"fields": [
+						{
+							"slug": "rotulo",
+							"label": "Rótulo da seção (ex.: 01 — Quem somos)",
+							"type": "string"
+						},
+						{
+							"slug": "nome",
+							"label": "Nome",
+							"type": "string",
+							"required": true
+						},
+						{
+							"slug": "cargo",
+							"label": "Cargo e formação",
+							"type": "string"
+						},
+						{
+							"slug": "foto",
+							"label": "Retrato",
+							"type": "image"
+						},
+						{
+							"slug": "legenda_foto",
+							"label": "Legenda do retrato",
+							"type": "string"
+						},
+						{
+							"slug": "texto",
+							"label": "Trajetória",
+							"type": "portableText"
+						},
+						{
+							"slug": "numeros",
+							"label": "Números de destaque",
+							"type": "repeater",
+							"validation": {
+								"subFields": [
+									{
+										"slug": "valor",
+										"label": "Valor",
+										"type": "string",
+										"required": true
+									},
+									{
+										"slug": "legenda",
+										"label": "Legenda",
+										"type": "string",
+										"required": true
+									}
+								],
+								"maxItems": 4
+							}
+						},
+						{
+							"slug": "foto_evento",
+							"label": "Foto adicional",
+							"type": "image"
+						},
+						{
+							"slug": "legenda_evento",
+							"label": "Legenda da foto adicional",
+							"type": "string"
+						},
+						{
+							"slug": "link_texto",
+							"label": "Link — texto",
+							"type": "string"
+						},
+						{
+							"slug": "link_url",
+							"label": "Link — endereço (começa com /, https://, mailto:, tel: ou #)",
+							"type": "string",
+							"validation": {
+								"pattern": "^(?:$|/|(?:https?://|mailto:|tel:|/(?!/)|#).+)$"
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"slug": "imagem_larga",
+			"label": "Imagem larga",
+			"description": "Foto em largura total com legenda",
+			"category": "Rethink",
+			"currentVersion": 1,
+			"versions": [
+				{
+					"version": 1,
+					"fields": [
+						{
+							"slug": "imagem",
+							"label": "Imagem",
+							"type": "image"
+						},
+						{
+							"slug": "legenda",
+							"label": "Legenda",
+							"type": "string"
+						},
+						{
+							"slug": "largura_total",
+							"label": "Ocupar toda a largura da tela",
+							"type": "boolean",
+							"defaultValue": false
+						}
+					]
+				}
+			]
+		},
+		{
+			"slug": "lista_solucoes",
+			"label": "Lista de soluções",
+			"description": "Mostra as soluções cadastradas",
+			"category": "Rethink",
+			"currentVersion": 1,
+			"versions": [
+				{
+					"version": 1,
+					"fields": [
+						{
+							"slug": "ancora",
+							"label": "Âncora (id da seção, opcional)",
+							"type": "string"
+						},
+						{
+							"slug": "rotulo",
+							"label": "Rótulo da seção (ex.: 01 — Quem somos)",
+							"type": "string"
+						},
+						{
+							"slug": "titulo",
+							"label": "Título (use Enter para quebrar linha)",
+							"type": "text"
+						},
+						{
+							"slug": "introducao",
+							"label": "Texto de apoio",
+							"type": "text"
+						},
+						{
+							"slug": "formato_linhas",
+							"label": "Formato em linhas grandes (em vez de cards)",
+							"type": "boolean",
+							"defaultValue": false
+						}
+					]
+				}
+			]
+		},
+		{
+			"slug": "metodologia",
+			"label": "Etapas (metodologia)",
+			"description": "Etapas numeradas",
+			"category": "Rethink",
+			"currentVersion": 1,
+			"versions": [
+				{
+					"version": 1,
+					"fields": [
+						{
+							"slug": "rotulo",
+							"label": "Rótulo da seção (ex.: 01 — Quem somos)",
+							"type": "string"
+						},
+						{
+							"slug": "titulo",
+							"label": "Título (use Enter para quebrar linha)",
+							"type": "text"
+						},
+						{
+							"slug": "introducao",
+							"label": "Texto de apoio",
+							"type": "text"
+						},
+						{
+							"slug": "etapas",
+							"label": "Etapas",
+							"type": "repeater",
+							"validation": {
+								"subFields": [
+									{
+										"slug": "titulo",
+										"label": "Etapa",
+										"type": "string",
+										"required": true
+									},
+									{
+										"slug": "descricao",
+										"label": "Descrição",
+										"type": "text"
+									}
+								],
+								"minItems": 1,
+								"maxItems": 8
+							}
+						},
+						{
+							"slug": "formato_linhas",
+							"label": "Formato em linhas (em vez de colunas)",
+							"type": "boolean",
+							"defaultValue": false
+						}
+					]
+				}
+			]
+		},
+		{
+			"slug": "diferenciais",
+			"label": "Diferenciais",
+			"description": "Lista de diferenciais em colunas",
+			"category": "Rethink",
+			"currentVersion": 1,
+			"versions": [
+				{
+					"version": 1,
+					"fields": [
+						{
+							"slug": "rotulo",
+							"label": "Rótulo da seção (ex.: 01 — Quem somos)",
+							"type": "string"
+						},
+						{
+							"slug": "titulo",
+							"label": "Título (use Enter para quebrar linha)",
+							"type": "text"
+						},
+						{
+							"slug": "itens",
+							"label": "Diferenciais",
+							"type": "repeater",
+							"validation": {
+								"subFields": [
+									{
+										"slug": "titulo",
+										"label": "Título",
+										"type": "string",
+										"required": true
+									},
+									{
+										"slug": "texto",
+										"label": "Texto",
+										"type": "text"
+									}
+								],
+								"minItems": 1,
+								"maxItems": 8
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"slug": "destaque_cases",
+			"label": "Cases em destaque",
+			"description": "Case principal e cases recentes (fundo preto)",
+			"category": "Rethink",
+			"currentVersion": 1,
+			"versions": [
+				{
+					"version": 1,
+					"fields": [
+						{
+							"slug": "rotulo",
+							"label": "Rótulo da seção (ex.: 01 — Quem somos)",
+							"type": "string"
+						},
+						{
+							"slug": "titulo",
+							"label": "Título (use Enter para quebrar linha)",
+							"type": "text"
+						},
+						{
+							"slug": "botao_texto",
+							"label": "Texto do botão para todos os cases",
+							"type": "string"
+						},
+						{
+							"slug": "quantidade",
+							"label": "Quantidade de cases além do destaque",
+							"type": "integer",
+							"defaultValue": 3
+						}
+					]
+				}
+			]
+		},
+		{
+			"slug": "grade_cases",
+			"label": "Grade de cases",
+			"description": "Todos os cases publicados, com filtro por solução",
+			"category": "Rethink",
+			"currentVersion": 1,
+			"versions": [
+				{
+					"version": 1,
+					"fields": [
+						{
+							"slug": "mostrar_filtro",
+							"label": "Mostrar filtro por solução",
+							"type": "boolean",
+							"defaultValue": true
+						}
+					]
+				}
+			]
+		},
+		{
+			"slug": "destaque_insights",
+			"label": "Insights recentes",
+			"description": "Últimos artigos publicados",
+			"category": "Rethink",
+			"currentVersion": 1,
+			"versions": [
+				{
+					"version": 1,
+					"fields": [
+						{
+							"slug": "rotulo",
+							"label": "Rótulo da seção (ex.: 01 — Quem somos)",
+							"type": "string"
+						},
+						{
+							"slug": "titulo",
+							"label": "Título (use Enter para quebrar linha)",
+							"type": "text"
+						},
+						{
+							"slug": "introducao",
+							"label": "Texto de apoio",
+							"type": "text"
+						},
+						{
+							"slug": "quantidade",
+							"label": "Quantidade",
+							"type": "integer",
+							"defaultValue": 3
+						}
+					]
+				}
+			]
+		},
+		{
+			"slug": "grade_insights",
+			"label": "Grade de insights",
+			"description": "Artigo em destaque, filtro por categoria e paginação",
+			"category": "Rethink",
+			"currentVersion": 1,
+			"versions": [
+				{
+					"version": 1,
+					"fields": [
+						{
+							"slug": "por_pagina",
+							"label": "Artigos por página",
+							"type": "integer",
+							"defaultValue": 6
+						}
+					]
+				}
+			]
+		},
+		{
+			"slug": "instagram",
+			"label": "Instagram",
+			"description": "Últimos posts do Instagram",
+			"category": "Rethink",
+			"currentVersion": 1,
+			"versions": [
+				{
+					"version": 1,
+					"fields": [
+						{
+							"slug": "rotulo",
+							"label": "Rótulo da seção (ex.: 01 — Quem somos)",
+							"type": "string"
+						},
+						{
+							"slug": "link_texto",
+							"label": "Link — texto",
+							"type": "string"
+						}
+					]
+				}
+			]
+		},
+		{
+			"slug": "contato",
+			"label": "Contato",
+			"description": "Chamada de contato com canais e formulário",
+			"category": "Rethink",
+			"currentVersion": 1,
+			"versions": [
+				{
+					"version": 1,
+					"fields": [
+						{
+							"slug": "ancora",
+							"label": "Âncora (id da seção, opcional)",
+							"type": "string"
+						},
+						{
+							"slug": "rotulo",
+							"label": "Rótulo da seção (ex.: 01 — Quem somos)",
+							"type": "string"
+						},
+						{
+							"slug": "titulo",
+							"label": "Título (use Enter para quebrar linha)",
+							"type": "text",
+							"required": true
+						},
+						{
+							"slug": "introducao",
+							"label": "Texto de apoio",
+							"type": "text"
+						},
+						{
+							"slug": "mostrar_canais",
+							"label": "Mostrar canais (e-mail, WhatsApp, redes)",
+							"type": "boolean",
+							"defaultValue": true
+						},
+						{
+							"slug": "mostrar_formulario",
+							"label": "Mostrar formulário",
+							"type": "boolean",
+							"defaultValue": true
+						},
+						{
+							"slug": "titulo_pagina",
+							"label": "Usar como título principal da página (h1)",
+							"type": "boolean",
+							"defaultValue": false
+						}
+					]
+				}
+			]
+		},
+		{
+			"slug": "faq",
+			"label": "Perguntas frequentes",
+			"description": "Perguntas e respostas (também vira dado estruturado para buscadores)",
+			"category": "Rethink",
+			"currentVersion": 1,
+			"versions": [
+				{
+					"version": 1,
+					"fields": [
+						{
+							"slug": "rotulo",
+							"label": "Rótulo da seção (ex.: 01 — Quem somos)",
+							"type": "string"
+						},
+						{
+							"slug": "titulo",
+							"label": "Título (use Enter para quebrar linha)",
+							"type": "text"
+						},
+						{
+							"slug": "perguntas",
+							"label": "Perguntas",
+							"type": "repeater",
+							"validation": {
+								"subFields": [
+									{
+										"slug": "pergunta",
+										"label": "Pergunta",
+										"type": "string",
+										"required": true
+									},
+									{
+										"slug": "resposta",
+										"label": "Resposta",
+										"type": "text",
+										"required": true
+									}
+								],
+								"minItems": 1,
+								"maxItems": 12
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"slug": "cta_faixa",
+			"label": "Faixa de chamada",
+			"description": "Faixa preta com título grande e botão",
+			"category": "Rethink",
+			"currentVersion": 1,
+			"versions": [
+				{
+					"version": 1,
+					"fields": [
+						{
+							"slug": "titulo",
+							"label": "Título (use Enter para quebrar linha)",
+							"type": "text",
+							"required": true
+						},
+						{
+							"slug": "texto",
+							"label": "Texto de apoio",
+							"type": "text"
+						},
+						{
+							"slug": "botao_texto",
+							"label": "Botão — texto",
+							"type": "string"
+						},
+						{
+							"slug": "botao_link",
+							"label": "Botão — link (começa com /, https://, mailto:, tel: ou #)",
+							"type": "string",
+							"validation": {
+								"pattern": "^(?:$|/|(?:https?://|mailto:|tel:|/(?!/)|#).+)$"
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"slug": "texto_longo",
+			"label": "Texto longo",
+			"description": "Texto corrido com índice (ex.: política de privacidade)",
+			"category": "Rethink",
+			"currentVersion": 1,
+			"versions": [
+				{
+					"version": 1,
+					"fields": [
+						{
+							"slug": "aviso",
+							"label": "Aviso em destaque",
+							"type": "text"
+						},
+						{
+							"slug": "atualizado_em",
+							"label": "Texto de atualização (ex.: Última atualização: 25/10/2026)",
+							"type": "string"
+						},
+						{
+							"slug": "conteudo",
+							"label": "Conteúdo (use Título 2 para cada seção)",
+							"type": "portableText",
+							"required": true
+						},
+						{
+							"slug": "mostrar_indice",
+							"label": "Mostrar índice lateral",
+							"type": "boolean",
+							"defaultValue": true
+						}
+					]
+				}
+			]
+		}
+	],
+	"collections": [
+		{
+			"slug": "paginas",
+			"label": "Páginas",
+			"labelSingular": "Página",
+			"icon": "file",
+			"urlPattern": "/{slug}",
+			"supports": [
+				"drafts",
+				"revisions",
+				"preview",
+				"seo",
+				"search"
+			],
+			"sortOrder": 1,
+			"fields": [
+				{
+					"slug": "title",
+					"label": "Título",
+					"type": "string",
+					"required": true,
+					"searchable": true
+				},
+				{
+					"slug": "conteudo",
+					"label": "Seções",
+					"type": "blocks",
+					"validation": {
+						"allowedTypes": [
+							"hero",
+							"logos_clientes",
+							"texto_duas_colunas",
+							"ficha",
+							"fundadora",
+							"imagem_larga",
+							"lista_solucoes",
+							"metodologia",
+							"diferenciais",
+							"destaque_cases",
+							"grade_cases",
+							"destaque_insights",
+							"grade_insights",
+							"instagram",
+							"contato",
+							"faq",
+							"cta_faixa",
+							"texto_longo"
+						],
+						"maxItems": 30
+					}
+				}
+			]
+		},
+		{
+			"slug": "solucoes",
+			"label": "Soluções",
+			"labelSingular": "Solução",
+			"icon": "lightbulb",
+			"urlPattern": "/solucoes/{slug}",
+			"supports": [
+				"drafts",
+				"revisions",
+				"preview",
+				"seo",
+				"search"
+			],
+			"sortOrder": 2,
+			"fields": [
+				{
+					"slug": "title",
+					"label": "Nome",
+					"type": "string",
+					"required": true,
+					"searchable": true
+				},
+				{
+					"slug": "numero",
+					"label": "Número (ex.: 01)",
+					"type": "string",
+					"required": true
+				},
+				{
+					"slug": "ordem",
+					"label": "Ordem de exibição",
+					"type": "integer",
+					"defaultValue": 1
+				},
+				{
+					"slug": "excerpt",
+					"label": "Resumo (cards e buscadores)",
+					"type": "text",
+					"required": true,
+					"searchable": true
+				},
+				{
+					"slug": "introducao",
+					"label": "Texto da abertura",
+					"type": "text",
+					"searchable": true
+				},
+				{
+					"slug": "imagem",
+					"label": "Imagem",
+					"type": "image"
+				},
+				{
+					"slug": "para_que_titulo",
+					"label": "Para quê — título",
+					"type": "string"
+				},
+				{
+					"slug": "para_que_texto",
+					"label": "Para quê — texto",
+					"type": "portableText",
+					"searchable": true
+				},
+				{
+					"slug": "frentes_titulo",
+					"label": "Frentes — título",
+					"type": "string",
+					"defaultValue": "Frentes de trabalho."
+				},
+				{
+					"slug": "frentes_unidade",
+					"label": "Frentes — como contar (ex.: frentes, disciplinas)",
+					"type": "string",
+					"defaultValue": "frentes"
+				},
+				{
+					"slug": "frentes",
+					"label": "Frentes de trabalho",
+					"type": "repeater",
+					"validation": {
+						"subFields": [
+							{
+								"slug": "titulo",
+								"label": "Frente",
+								"type": "string",
+								"required": true
+							}
+						],
+						"maxItems": 20
+					}
+				},
+				{
+					"slug": "frentes_nota",
+					"label": "Nota abaixo das frentes",
+					"type": "text"
+				},
+				{
+					"slug": "faq",
+					"label": "Perguntas frequentes",
+					"type": "repeater",
+					"validation": {
+						"subFields": [
+							{
+								"slug": "pergunta",
+								"label": "Pergunta",
+								"type": "string",
+								"required": true
+							},
+							{
+								"slug": "resposta",
+								"label": "Resposta",
+								"type": "text",
+								"required": true
+							}
+						],
+						"maxItems": 12
+					}
+				}
+			]
+		},
+		{
+			"slug": "cases",
+			"label": "Cases",
+			"labelSingular": "Case",
+			"icon": "briefcase",
+			"urlPattern": "/cases/{slug}",
+			"supports": [
+				"drafts",
+				"revisions",
+				"preview",
+				"scheduling",
+				"seo",
+				"search"
+			],
+			"sortOrder": 3,
+			"fields": [
+				{
+					"slug": "title",
+					"label": "Título do case (ex.: nome do cliente)",
+					"type": "string",
+					"required": true,
+					"searchable": true
+				},
+				{
+					"slug": "cliente",
+					"label": "Cliente",
+					"type": "reference",
+					"options": {
+						"collection": "clientes"
+					}
+				},
+				{
+					"slug": "setor",
+					"label": "Setor",
+					"type": "string"
+				},
+				{
+					"slug": "solucao",
+					"label": "Solução",
+					"type": "reference",
+					"options": {
+						"collection": "solucoes"
+					}
+				},
+				{
+					"slug": "periodo",
+					"label": "Período (ex.: mar/2025 – set/2025)",
+					"type": "string"
+				},
+				{
+					"slug": "frase_titulo",
+					"label": "Frase-título (resultado em linguagem simples)",
+					"type": "text",
+					"searchable": true
+				},
+				{
+					"slug": "excerpt",
+					"label": "Resumo do card (desafio e solução em uma frase)",
+					"type": "text",
+					"searchable": true
+				},
+				{
+					"slug": "imagem",
+					"label": "Imagem principal",
+					"type": "image"
+				},
+				{
+					"slug": "metricas",
+					"label": "Resultados em números",
+					"type": "repeater",
+					"validation": {
+						"subFields": [
+							{
+								"slug": "valor",
+								"label": "Valor (ex.: +32%)",
+								"type": "string",
+								"required": true
+							},
+							{
+								"slug": "indicador",
+								"label": "Indicador e período de comparação",
+								"type": "string",
+								"required": true
+							}
+						],
+						"maxItems": 4
+					}
+				},
+				{
+					"slug": "contexto",
+					"label": "Contexto",
+					"type": "portableText",
+					"searchable": true
+				},
+				{
+					"slug": "desafio",
+					"label": "Desafio",
+					"type": "portableText",
+					"searchable": true
+				},
+				{
+					"slug": "o_que_fizemos",
+					"label": "O que fizemos",
+					"type": "portableText",
+					"searchable": true
+				},
+				{
+					"slug": "entregas",
+					"label": "Principais entregas",
+					"type": "repeater",
+					"validation": {
+						"subFields": [
+							{
+								"slug": "item",
+								"label": "Entrega",
+								"type": "string",
+								"required": true
+							}
+						],
+						"maxItems": 12
+					}
+				},
+				{
+					"slug": "imagem_apoio",
+					"label": "Imagem de apoio",
+					"type": "image"
+				},
+				{
+					"slug": "legenda_apoio",
+					"label": "Legenda da imagem de apoio",
+					"type": "string"
+				},
+				{
+					"slug": "resultado",
+					"label": "Resultado",
+					"type": "portableText",
+					"searchable": true
+				},
+				{
+					"slug": "depoimento",
+					"label": "Depoimento do cliente (com autorização)",
+					"type": "text"
+				},
+				{
+					"slug": "depoimento_autor",
+					"label": "Autor do depoimento (Nome · Cargo, Empresa)",
+					"type": "string"
+				},
+				{
+					"slug": "destaque",
+					"label": "Destacar na Home",
+					"type": "boolean",
+					"defaultValue": false
+				},
+				{
+					"slug": "ordem",
+					"label": "Ordem de exibição",
+					"type": "integer",
+					"defaultValue": 10
+				}
+			]
+		},
+		{
+			"slug": "insights",
+			"label": "Insights",
+			"labelSingular": "Insight",
+			"icon": "newspaper",
+			"urlPattern": "/insights/{slug}",
+			"supports": [
+				"drafts",
+				"revisions",
+				"preview",
+				"scheduling",
+				"seo",
+				"search"
+			],
+			"sortOrder": 4,
+			"fields": [
+				{
+					"slug": "title",
+					"label": "Título",
+					"type": "string",
+					"required": true,
+					"searchable": true
+				},
+				{
+					"slug": "linha_fina",
+					"label": "Linha fina (o que o leitor vai aprender)",
+					"type": "text",
+					"searchable": true
+				},
+				{
+					"slug": "excerpt",
+					"label": "Resumo (cards e meta description)",
+					"type": "text",
+					"required": true,
+					"searchable": true
+				},
+				{
+					"slug": "capa",
+					"label": "Imagem de capa",
+					"type": "image"
+				},
+				{
+					"slug": "legenda_capa",
+					"label": "Legenda e crédito da capa",
+					"type": "string"
+				},
+				{
+					"slug": "content",
+					"label": "Texto",
+					"type": "portableText",
+					"required": true,
+					"searchable": true
+				},
+				{
+					"slug": "tempo_leitura",
+					"label": "Tempo de leitura (min)",
+					"type": "integer"
+				},
+				{
+					"slug": "link_linkedin",
+					"label": "Link do post no LinkedIn",
+					"type": "url"
+				},
+				{
+					"slug": "destaque",
+					"label": "Destacar na página de Insights",
+					"type": "boolean",
+					"defaultValue": false
+				}
+			]
+		},
+		{
+			"slug": "clientes",
+			"label": "Clientes",
+			"labelSingular": "Cliente",
+			"icon": "buildings",
+			"supports": [
+				"drafts",
+				"revisions"
+			],
+			"routable": false,
+			"sortOrder": 5,
+			"fields": [
+				{
+					"slug": "title",
+					"label": "Nome",
+					"type": "string",
+					"required": true,
+					"searchable": true
+				},
+				{
+					"slug": "logo",
+					"label": "Logo (PNG ou SVG, fundo transparente)",
+					"type": "image"
+				},
+				{
+					"slug": "site",
+					"label": "Site",
+					"type": "url"
+				},
+				{
+					"slug": "setor",
+					"label": "Setor",
+					"type": "string"
+				},
+				{
+					"slug": "autorizado",
+					"label": "Uso do nome e logo autorizado pelo cliente",
+					"type": "boolean",
+					"defaultValue": false
+				},
+				{
+					"slug": "exibir_logo",
+					"label": "Exibir na grade de logos",
+					"type": "boolean",
+					"defaultValue": true
+				},
+				{
+					"slug": "ordem",
+					"label": "Ordem de exibição",
+					"type": "integer",
+					"defaultValue": 10
+				}
+			]
+		},
+		{
+			"slug": "dados_empresa",
+			"label": "Dados da empresa",
+			"labelSingular": "Dados da empresa",
+			"icon": "identification-card",
+			"description": "Contatos, redes, endereço e barra de aviso. Use só o item \"rethink\".",
+			"supports": [
+				"revisions"
+			],
+			"routable": false,
+			"sortOrder": 6,
+			"fields": [
+				{
+					"slug": "title",
+					"label": "Nome da empresa",
+					"type": "string",
+					"required": true
+				},
+				{
+					"slug": "razao_social",
+					"label": "Razão social",
+					"type": "string"
+				},
+				{
+					"slug": "cnpj",
+					"label": "CNPJ",
+					"type": "string"
+				},
+				{
+					"slug": "ano_fundacao",
+					"label": "Ano de fundação",
+					"type": "string"
+				},
+				{
+					"slug": "email",
+					"label": "E-mail de contato",
+					"type": "string"
+				},
+				{
+					"slug": "whatsapp",
+					"label": "WhatsApp (como aparece, ex.: +55 51 99999-9999)",
+					"type": "string"
+				},
+				{
+					"slug": "whatsapp_numero",
+					"label": "WhatsApp (só números com DDI, ex.: 5551999999999)",
+					"type": "string"
+				},
+				{
+					"slug": "endereco",
+					"label": "Endereço",
+					"type": "string"
+				},
+				{
+					"slug": "cidade",
+					"label": "Cidade",
+					"type": "string"
+				},
+				{
+					"slug": "uf",
+					"label": "UF",
+					"type": "string"
+				},
+				{
+					"slug": "cep",
+					"label": "CEP",
+					"type": "string"
+				},
+				{
+					"slug": "linkedin_url",
+					"label": "LinkedIn (URL da página)",
+					"type": "url"
+				},
+				{
+					"slug": "instagram_url",
+					"label": "Instagram (URL do perfil)",
+					"type": "url"
+				},
+				{
+					"slug": "instagram_perfil",
+					"label": "Instagram (@perfil)",
+					"type": "string"
+				},
+				{
+					"slug": "aviso_texto",
+					"label": "Barra de aviso no topo — texto",
+					"type": "string"
+				},
+				{
+					"slug": "aviso_link",
+					"label": "Barra de aviso no topo — link (começa com /, https://, mailto:, tel: ou #)",
+					"type": "string",
+					"validation": {
+						"pattern": "^(?:$|/|(?:https?://|mailto:|tel:|/(?!/)|#).+)$"
+					}
+				},
+				{
+					"slug": "descricao_organizacao",
+					"label": "Descrição curta da empresa (buscadores e IAs)",
+					"type": "text"
+				},
+				{
+					"slug": "cta_titulo",
+					"label": "Faixa final padrão — título (soluções, insights)",
+					"type": "text"
+				},
+				{
+					"slug": "cta_botao",
+					"label": "Faixa final padrão — texto do botão",
+					"type": "string"
+				},
+				{
+					"slug": "cta_case_titulo",
+					"label": "Faixa final dos cases — título",
+					"type": "text"
+				}
+			]
+		}
+	],
+	"taxonomies": [
+		{
+			"name": "categoria",
+			"label": "Categorias",
+			"labelSingular": "Categoria",
+			"hierarchical": true,
+			"collections": [
+				"insights"
+			],
+			"terms": [
+				{
+					"slug": "estrategia",
+					"label": "Estratégia"
+				},
+				{
+					"slug": "dados",
+					"label": "Dados"
+				},
+				{
+					"slug": "inovacao",
+					"label": "Inovação"
+				},
+				{
+					"slug": "comunicacao",
+					"label": "Comunicação"
+				}
+			]
+		},
+		{
+			"name": "tag",
+			"label": "Tags",
+			"labelSingular": "Tag",
+			"hierarchical": false,
+			"collections": [
+				"insights"
+			],
+			"terms": []
+		}
+	],
+	"menus": [
+		{
+			"name": "principal",
+			"label": "Menu principal",
+			"items": [
+				{
+					"type": "custom",
+					"label": "Quem somos",
+					"url": "/quem-somos"
+				},
+				{
+					"type": "custom",
+					"label": "Nossas soluções",
+					"url": "/solucoes"
+				},
+				{
+					"type": "custom",
+					"label": "Cases",
+					"url": "/cases"
+				},
+				{
+					"type": "custom",
+					"label": "Insights",
+					"url": "/insights"
+				},
+				{
+					"type": "custom",
+					"label": "Contato",
+					"url": "/contato"
+				}
+			]
+		},
+		{
+			"name": "rodape",
+			"label": "Rodapé — Rethink",
+			"items": [
+				{
+					"type": "custom",
+					"label": "Quem somos",
+					"url": "/quem-somos"
+				},
+				{
+					"type": "custom",
+					"label": "Nossas soluções",
+					"url": "/solucoes"
+				},
+				{
+					"type": "custom",
+					"label": "Cases",
+					"url": "/cases"
+				},
+				{
+					"type": "custom",
+					"label": "Insights",
+					"url": "/insights"
+				}
+			]
+		},
+		{
+			"name": "legal",
+			"label": "Rodapé — links legais",
+			"items": [
+				{
+					"type": "custom",
+					"label": "Política de Privacidade",
+					"url": "/privacidade"
+				}
+			]
+		}
+	],
+	"bylines": [
+		{
+			"id": "byline-roberta",
+			"slug": "roberta-krause",
+			"displayName": "Roberta Krause",
+			"bio": "Sócia-fundadora da Rethink. Publicitária, doutora e mestre em Ciências da Comunicação."
+		}
+	],
+	"content": {
+		"solucoes": [
+			{
+				"id": "sol-dados",
+				"slug": "data-driven-marketing",
+				"status": "published",
+				"data": {
+					"numero": "01",
+					"ordem": 1,
+					"title": "Data Driven Marketing",
+					"excerpt": "Planejamento, pesquisa e analytics para decisões de marketing baseadas em dados — e capacitação do time.",
+					"introducao": "Planejamento estratégico, pesquisa e analytics para que as decisões de marketing sejam tomadas com base em dados — e capacitação do time para sustentar essa cultura.",
+					"imagem": {
+						"$media": {
+							"url": "https://pub-da52ac9b2d454fe8996979e23bdad69a.r2.dev/seed/dados.jpg",
+							"alt": "Analista anota um gráfico impresso ao lado de um notebook com painéis de dados",
+							"filename": "dados.jpg"
+						}
+					},
+					"para_que_titulo": "Decidir com dados.",
+					"para_que_texto": [
+						{
+							"_type": "block",
+							"_key": "b0001",
+							"style": "normal",
+							"markDefs": [],
+							"children": [
+								{
+									"_type": "span",
+									"_key": "s0002",
+									"text": "Transformar dados em decisões de marketing: do portfólio à comunicação, com pesquisa de mercado, estruturas de business analytics e treinamento para que o time acompanhe métricas e indicadores de performance no dia a dia.",
+									"marks": []
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "b0009",
+							"style": "normal",
+							"markDefs": [],
+							"children": [
+								{
+									"_type": "span",
+									"_key": "s0010",
+									"text": "Como toda frente da Rethink, segue a nossa metodologia data driven: indicadores definidos no início orientam o planejamento, a execução e os ajustes.",
+									"marks": []
+								}
+							]
+						}
+					],
+					"frentes": [
+						{
+							"titulo": "Planejamento estratégico de portfólio data based"
+						},
+						{
+							"titulo": "Pesquisas de mercado"
+						},
+						{
+							"titulo": "Planejamento estratégico de comunicação"
+						},
+						{
+							"titulo": "Gestão de canais — social media"
+						},
+						{
+							"titulo": "Target analytics"
+						},
+						{
+							"titulo": "Capacitação de equipes"
+						},
+						{
+							"titulo": "Mentoria para a área de marketing"
+						},
+						{
+							"titulo": "Desenvolvimento de estrutura de business analytics para marketing"
+						},
+						{
+							"titulo": "Treinamento para adoção de ferramentas de análise de performance de marketing e mídia"
+						},
+						{
+							"titulo": "Workshops e cursos de IA aplicada"
+						},
+						{
+							"titulo": "Mentorias para team building"
+						},
+						{
+							"titulo": "Trilhas educacionais"
+						}
+					],
+					"frentes_titulo": "Frentes de trabalho.",
+					"frentes_unidade": "frentes"
+				}
+			},
+			{
+				"id": "sol-midia",
+				"slug": "inteligencia-de-midia-e-performance",
+				"status": "published",
+				"data": {
+					"numero": "02",
+					"ordem": 2,
+					"title": "Inteligência de Mídia e Performance",
+					"excerpt": "Mídia planejada e avaliada com dados: arquitetura de canais, performance, influência e eventos.",
+					"introducao": "Planejamento e avaliação de mídia com inteligência de dados: arquitetura de canais, performance e preparo dos gestores — inclusive em marketing de influência e eventos.",
+					"imagem": {
+						"$media": {
+							"url": "https://pub-da52ac9b2d454fe8996979e23bdad69a.r2.dev/seed/case-financeiro.jpg",
+							"alt": "Profissional acompanha painéis de dados de mídia em vários monitores",
+							"filename": "case-financeiro.jpg"
+						}
+					},
+					"para_que_titulo": "Mídia que se mede.",
+					"para_que_texto": [
+						{
+							"_type": "block",
+							"_key": "b0003",
+							"style": "normal",
+							"markDefs": [],
+							"children": [
+								{
+									"_type": "span",
+									"_key": "s0004",
+									"text": "Planejar, avaliar e conduzir investimentos de mídia a partir de dados: desenhar a arquitetura de canais, definir o que é performance para cada frente e preparar gestores e equipes para tomar decisões de mídia com segurança.",
+									"marks": []
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "b0011",
+							"style": "normal",
+							"markDefs": [],
+							"children": [
+								{
+									"_type": "span",
+									"_key": "s0012",
+									"text": "Como toda frente da Rethink, segue a nossa metodologia data driven: indicadores definidos no início orientam o planejamento, a execução e os ajustes.",
+									"marks": []
+								}
+							]
+						}
+					],
+					"frentes": [
+						{
+							"titulo": "Planejamento estratégico de mídia"
+						},
+						{
+							"titulo": "Media training para gestores"
+						},
+						{
+							"titulo": "Desenho de arquitetura de canais"
+						},
+						{
+							"titulo": "Mentoria de mídia e performance para marketing e comunicação"
+						},
+						{
+							"titulo": "Avaliação de projetos de mídia"
+						},
+						{
+							"titulo": "Planejamento de performance para marketing de influência"
+						},
+						{
+							"titulo": "Condução de eventos a partir da inteligência de dados"
+						}
+					],
+					"frentes_titulo": "Frentes de trabalho.",
+					"frentes_unidade": "frentes"
+				}
+			},
+			{
+				"id": "sol-inovacao",
+				"slug": "aculturamento-e-gestao-da-inovacao",
+				"status": "published",
+				"data": {
+					"numero": "03",
+					"ordem": 3,
+					"title": "Aculturamento e Gestão da Inovação",
+					"excerpt": "Imersões, cursos e projetos que levam a cultura de inovação e o intraempreendedorismo para dentro das equipes.",
+					"introducao": "Imersões, cursos e projetos que levam a cultura de inovação e o intraempreendedorismo para dentro das equipes — com metodologia e governança.",
+					"imagem": {
+						"$media": {
+							"url": "https://pub-da52ac9b2d454fe8996979e23bdad69a.r2.dev/seed/ig-1.jpg",
+							"alt": "Consultora conduz workshop diante de um quadro com anotações",
+							"filename": "ig-1.jpg"
+						}
+					},
+					"para_que_titulo": "Inovação como cultura.",
+					"para_que_texto": [
+						{
+							"_type": "block",
+							"_key": "b0005",
+							"style": "normal",
+							"markDefs": [],
+							"children": [
+								{
+									"_type": "span",
+									"_key": "s0006",
+									"text": "Tratar inovação como gestão, e não como projeto isolado: preparar times com metodologia, imersões e projetos intraempreendedores, enfrentar as barreiras para inovar e incorporar diversidade, equidade e inclusão desde o desenho.",
+									"marks": []
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "b0013",
+							"style": "normal",
+							"markDefs": [],
+							"children": [
+								{
+									"_type": "span",
+									"_key": "s0014",
+									"text": "Como toda frente da Rethink, segue a nossa metodologia data driven: indicadores definidos no início orientam o planejamento, a execução e os ajustes.",
+									"marks": []
+								}
+							]
+						}
+					],
+					"frentes": [
+						{
+							"titulo": "Workshops para team building"
+						},
+						{
+							"titulo": "Cursos e metodologia para gestão da inovação"
+						},
+						{
+							"titulo": "Imersões para aculturamento de times"
+						},
+						{
+							"titulo": "Projetos intraempreendedores"
+						},
+						{
+							"titulo": "Mindset intraempreendedor e gestão de barreiras para inovação"
+						},
+						{
+							"titulo": "Projetos e governança DEI by Design (Diversidade, Equidade e Inclusão por Design)"
+						}
+					],
+					"frentes_titulo": "Frentes de trabalho.",
+					"frentes_unidade": "frentes"
+				}
+			},
+			{
+				"id": "sol-warroom",
+				"slug": "war-room",
+				"status": "published",
+				"data": {
+					"numero": "04",
+					"ordem": 4,
+					"title": "War Room",
+					"excerpt": "Sala de operação com dados em tempo real para conduzir eventos, projetos e produtos de curto prazo.",
+					"introducao": "Uma sala de operação com dados em tempo real para conduzir eventos, projetos e produtos de curto prazo — com inteligência, mídia, imprensa e lideranças na mesma mesa.",
+					"imagem": {
+						"$media": {
+							"url": "https://pub-da52ac9b2d454fe8996979e23bdad69a.r2.dev/seed/hero.jpg",
+							"alt": "Equipe reunida diante de um quadro com análises",
+							"filename": "hero.jpg"
+						}
+					},
+					"para_que_titulo": "Decisão em tempo real.",
+					"para_que_texto": [
+						{
+							"_type": "block",
+							"_key": "b0007",
+							"style": "normal",
+							"markDefs": [],
+							"children": [
+								{
+									"_type": "span",
+									"_key": "s0008",
+									"text": "Identificar problemas e oportunidades, promover a resolução em curto espaço de tempo, desenvolver insights e traduzi-los em ações ágeis com foco em resultados.",
+									"marks": []
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "b0015",
+							"style": "normal",
+							"markDefs": [],
+							"children": [
+								{
+									"_type": "span",
+									"_key": "s0016",
+									"text": "Como toda frente da Rethink, segue a nossa metodologia data driven: indicadores definidos no início orientam o planejamento, a execução e os ajustes.",
+									"marks": []
+								}
+							]
+						}
+					],
+					"frentes_titulo": "Quem está na sala.",
+					"frentes_unidade": "disciplinas",
+					"frentes_nota": "A Rethink planeja e conduz a operação dessa equipe estratégica de marketing, que monitora dados em tempo real para conduzir eventos, projetos e produtos de curto prazo.",
+					"frentes": [
+						{
+							"titulo": "Inteligência"
+						},
+						{
+							"titulo": "Mídia"
+						},
+						{
+							"titulo": "PR e assessoria de imprensa"
+						},
+						{
+							"titulo": "Análise de dados"
+						},
+						{
+							"titulo": "Social media"
+						},
+						{
+							"titulo": "Lideranças do cliente"
+						}
+					]
+				}
+			}
+		],
+		"paginas": [
+			{
+				"id": "pg-home",
+				"slug": "home",
+				"status": "published",
+				"data": {
+					"title": "Início",
+					"conteudo": [
+						{
+							"_type": "hero",
+							"_version": 1,
+							"_key": "home-hero",
+							"rotulo": "Consultoria de marketing · data driven · inovação",
+							"titulo": "Let’s\nRethink.",
+							"subtitulo": "Convidamos empresas a repensar sua estratégia de marketing à luz do momento atual do negócio e do mercado — e a executá-la com decisões baseadas em dados, métricas claras e foco em valor de longo prazo.",
+							"cta1_texto": "Vamos conversar",
+							"cta1_link": "/contato",
+							"cta2_texto": "Ver cases",
+							"cta2_link": "/cases",
+							"imagem": {
+								"$media": {
+									"url": "https://pub-da52ac9b2d454fe8996979e23bdad69a.r2.dev/seed/hero.jpg",
+									"alt": "Consultora apresenta estratégia ao time diante de um quadro",
+									"filename": "hero.jpg"
+								}
+							},
+							"legenda_imagem": "Workshop de diagnóstico",
+							"assinatura": "Inteligência de marketing com resultados",
+							"fundo_escuro": true,
+							"mostrar_trilha": false
+						},
+						{
+							"_type": "logos_clientes",
+							"_version": 1,
+							"_key": "home-logos",
+							"rotulo": "Empresas que já repensaram com a gente",
+							"limite": 8
+						},
+						{
+							"_type": "texto_duas_colunas",
+							"_version": 1,
+							"_key": "home-quem",
+							"rotulo": "01 — Quem somos",
+							"titulo": "Estratégia que se prova em resultado.",
+							"texto": [
+								{
+									"_type": "block",
+									"_key": "b0017",
+									"style": "normal",
+									"markDefs": [],
+									"children": [
+										{
+											"_type": "span",
+											"_key": "s0018",
+											"text": "A Rethink é uma consultoria de marketing com forte experiência no desenvolvimento e na gestão de projetos de comunicação e marketing, unindo estratégia, inteligência de dados e gestão da inovação em processos e portfólio.",
+											"marks": []
+										}
+									]
+								},
+								{
+									"_type": "block",
+									"_key": "b0019",
+									"style": "normal",
+									"markDefs": [],
+									"children": [
+										{
+											"_type": "span",
+											"_key": "s0020",
+											"text": "Atuamos do planejamento à execução, com metodologia própria e decisões baseadas em dados, acompanhando métricas e indicadores de performance o tempo todo — e levando a cultura data driven para dentro dos nossos clientes.",
+											"marks": []
+										}
+									]
+								}
+							],
+							"link_texto": "Conheça a Rethink",
+							"link_url": "/quem-somos",
+							"fundo_branco": false
+						},
+						{
+							"_type": "lista_solucoes",
+							"_version": 1,
+							"_key": "home-solucoes",
+							"rotulo": "02 — Nossas soluções",
+							"titulo": "Do diagnóstico\nà execução.",
+							"introducao": "Quatro frentes que podem ser contratadas separadamente ou combinadas em um mesmo projeto.",
+							"formato_linhas": false
+						},
+						{
+							"_type": "metodologia",
+							"_version": 1,
+							"_key": "home-metodo",
+							"rotulo": "03 — Como trabalhamos",
+							"titulo": "Metodologia [nome].",
+							"introducao": "Metodologia própria, data driven decision based. [Validar etapas reais.]",
+							"etapas": [
+								{
+									"titulo": "[Diagnóstico]",
+									"descricao": "Leitura do momento da empresa e do mercado a partir de dados."
+								},
+								{
+									"titulo": "[Estratégia]",
+									"descricao": "Objetivos, indicadores de performance e plano priorizado."
+								},
+								{
+									"titulo": "[Execução]",
+									"descricao": "Projetos de comunicação e marketing com gestão próxima e ritmo definido."
+								},
+								{
+									"titulo": "[Medição e ajuste]",
+									"descricao": "Indicadores acompanhados e estratégia repensada quando o dado pede."
+								}
+							],
+							"formato_linhas": false
+						},
+						{
+							"_type": "destaque_cases",
+							"_version": 1,
+							"_key": "home-cases",
+							"rotulo": "04 — Cases",
+							"titulo": "Resultados que\na gente mede.",
+							"botao_texto": "Todos os cases",
+							"quantidade": 3
+						},
+						{
+							"_type": "destaque_insights",
+							"_version": 1,
+							"_key": "home-insights",
+							"rotulo": "05 — Insights",
+							"titulo": "Para repensar.",
+							"introducao": "Artigos publicados aqui primeiro e compartilhados no LinkedIn — o conteúdo trabalha pelo SEO do site.",
+							"quantidade": 3
+						},
+						{
+							"_type": "instagram",
+							"_version": 1,
+							"_key": "home-instagram",
+							"rotulo": "No Instagram",
+							"link_texto": "Seguir"
+						},
+						{
+							"_type": "contato",
+							"_version": 1,
+							"_key": "home-contato",
+							"ancora": "contato",
+							"rotulo": "06 — Contato",
+							"titulo": "Let’s\nRethink\ntogether.",
+							"introducao": "Conte o momento da sua empresa e o que você quer repensar.",
+							"mostrar_canais": true,
+							"mostrar_formulario": true,
+							"titulo_pagina": false
+						}
+					]
+				}
+			},
+			{
+				"id": "pg-quem-somos",
+				"slug": "quem-somos",
+				"status": "published",
+				"data": {
+					"title": "Quem somos",
+					"conteudo": [
+						{
+							"_type": "hero",
+							"_version": 1,
+							"_key": "qs-hero",
+							"rotulo": "Quem somos",
+							"titulo": "Repensar\né o nosso\nmétodo.",
+							"subtitulo": "Somos uma consultoria de marketing que une estratégia, inteligência de dados e gestão da inovação — do planejamento à execução, com foco em resultados e em valor de longo prazo para os nossos clientes.",
+							"fundo_escuro": false,
+							"mostrar_trilha": true
+						},
+						{
+							"_type": "imagem_larga",
+							"_version": 1,
+							"_key": "qs-foto",
+							"imagem": {
+								"$media": {
+									"url": "https://pub-da52ac9b2d454fe8996979e23bdad69a.r2.dev/seed/escritorio.jpg",
+									"alt": "Duas consultoras analisam um painel de dados na parede do escritório",
+									"filename": "escritorio.jpg"
+								}
+							},
+							"legenda": "[Imagem ilustrativa — substituir por foto real do escritório ou de um projeto]",
+							"largura_total": false
+						},
+						{
+							"_type": "texto_duas_colunas",
+							"_version": 1,
+							"_key": "qs-porque",
+							"rotulo": "01 — Por que existimos",
+							"titulo": "Let’s Rethink.",
+							"texto": [
+								{
+									"_type": "block",
+									"_key": "b0021",
+									"style": "normal",
+									"markDefs": [],
+									"children": [
+										{
+											"_type": "span",
+											"_key": "s0022",
+											"text": "Mercados mudam, empresas mudam — e a estratégia de marketing precisa acompanhar. Por isso convidamos nossos clientes a repensar suas estratégias à luz do momento atual da empresa e do mercado.",
+											"marks": []
+										}
+									]
+								},
+								{
+									"_type": "block",
+									"_key": "b0023",
+									"style": "normal",
+									"markDefs": [],
+									"children": [
+										{
+											"_type": "span",
+											"_key": "s0024",
+											"text": "Concretizamos cada projeto com uma metodologia própria, totalmente orientada a decisões baseadas em dados, com olhar constante sobre métricas e indicadores de performance.",
+											"marks": []
+										}
+									]
+								}
+							]
+						},
+						{
+							"_type": "ficha",
+							"_version": 1,
+							"_key": "qs-ficha",
+							"itens": [
+								{
+									"rotulo": "Fundação",
+									"valor": "[ano]"
+								},
+								{
+									"rotulo": "Sede",
+									"valor": "Porto Alegre/RS"
+								},
+								{
+									"rotulo": "Fundadora",
+									"valor": "Roberta Krause"
+								}
+							]
+						},
+						{
+							"_type": "fundadora",
+							"_version": 1,
+							"_key": "qs-roberta",
+							"rotulo": "Quem está à frente",
+							"nome": "Roberta Krause",
+							"cargo": "Sócia-fundadora · Publicitária · Doutora e Mestre em Ciências da Comunicação",
+							"foto": {
+								"$media": {
+									"url": "https://pub-da52ac9b2d454fe8996979e23bdad69a.r2.dev/seed/roberta-retrato.jpg",
+									"alt": "Retrato de Roberta Krause, sócia-fundadora da Rethink",
+									"filename": "roberta-retrato.jpg"
+								}
+							},
+							"legenda_foto": "Roberta Fleck Saibro Krause · Sócia-fundadora",
+							"texto": [
+								{
+									"_type": "block",
+									"_key": "b0025",
+									"style": "normal",
+									"markDefs": [],
+									"children": [
+										{
+											"_type": "span",
+											"_key": "s0026",
+											"text": "Com mais de 20 anos de experiência em comunicação, passou por grandes agências de publicidade nacionais em São Paulo, Brasília e no Rio Grande do Sul, à frente do planejamento de clientes como Caixa Econômica Federal, Ministério da Saúde, Grupo Gerdau, Nissan, Renault e Apex-Brasil.",
+											"marks": []
+										}
+									]
+								},
+								{
+									"_type": "block",
+									"_key": "b0027",
+									"style": "normal",
+									"markDefs": [],
+									"children": [
+										{
+											"_type": "span",
+											"_key": "s0028",
+											"text": "Tem forte experiência no desenvolvimento e na gestão de projetos de comunicação, valor de marca e estratégias de marketing para os segmentos de varejo, indústria, consultorias e educação.",
+											"marks": []
+										}
+									]
+								},
+								{
+									"_type": "block",
+									"_key": "b0029",
+									"style": "normal",
+									"markDefs": [],
+									"children": [
+										{
+											"_type": "span",
+											"_key": "s0030",
+											"text": "Na ESPM, coordena cursos de pós-graduação, é coordenadora nacional do Atitude Empreendedora e coordenadora de Projetos de Inovação e Educação Executiva em Porto Alegre. Leciona na graduação em São Paulo, Rio de Janeiro e Porto Alegre, e na pós-graduação em Curitiba, Porto Alegre e Florianópolis.",
+											"marks": []
+										}
+									]
+								}
+							],
+							"numeros": [
+								{
+									"valor": "20+",
+									"legenda": "anos em comunicação e planejamento"
+								},
+								{
+									"valor": "Dra.",
+									"legenda": "em Ciências da Comunicação"
+								},
+								{
+									"valor": "ESPM",
+									"legenda": "coordenação e docência em 5 cidades"
+								}
+							],
+							"foto_evento": {
+								"$media": {
+									"url": "https://pub-da52ac9b2d454fe8996979e23bdad69a.r2.dev/seed/roberta-palestra.jpg",
+									"alt": "Roberta Krause palestra em evento da ESPM",
+									"filename": "roberta-palestra.jpg"
+								}
+							},
+							"legenda_evento": "Roberta no Lifelong Learning Experience, da ESPM Porto Alegre, no Instituto Caldeira.",
+							"link_texto": "Roberta no LinkedIn",
+							"link_url": "https://www.linkedin.com/"
+						},
+						{
+							"_type": "diferenciais",
+							"_version": 1,
+							"_key": "qs-dif",
+							"rotulo": "02 — O que nos diferencia",
+							"titulo": "Performance\ncom método.",
+							"itens": [
+								{
+									"titulo": "Foco em resultado",
+									"texto": "Capacidade de performance orientada a resultados, medida por indicadores definidos desde o início."
+								},
+								{
+									"titulo": "Cultura data driven",
+									"texto": "Iniciativas ancoradas no aculturamento data driven: o cliente passa a decidir com dados, não só a receber relatórios."
+								},
+								{
+									"titulo": "Gestão da inovação",
+									"texto": "Inovação tratada como gestão — em processos e portfólio — e não como projeto isolado."
+								},
+								{
+									"titulo": "Estratégia que executa",
+									"texto": "Time de alta capacidade estratégica e operacional: quem planeja acompanha a execução."
+								}
+							]
+						},
+						{
+							"_type": "metodologia",
+							"_version": 1,
+							"_key": "qs-metodo",
+							"rotulo": "03 — Metodologia",
+							"titulo": "Metodologia [nome].",
+							"introducao": "Data driven decision based: cada etapa tem entregáveis e indicadores próprios. [Validar nome, etapas e entregáveis.]",
+							"etapas": [
+								{
+									"titulo": "[Diagnóstico]",
+									"descricao": "Leitura do momento da empresa e do mercado a partir de dados. Entregável: [validar]."
+								},
+								{
+									"titulo": "[Estratégia]",
+									"descricao": "Objetivos, indicadores de performance e plano priorizado. Entregável: [validar]."
+								},
+								{
+									"titulo": "[Execução]",
+									"descricao": "Projetos de comunicação e marketing com gestão próxima e ritmo definido. Entregável: [validar]."
+								},
+								{
+									"titulo": "[Medição e ajuste]",
+									"descricao": "Indicadores acompanhados e estratégia repensada quando o dado pede. Entregável: [validar]."
+								}
+							],
+							"formato_linhas": true
+						},
+						{
+							"_type": "logos_clientes",
+							"_version": 1,
+							"_key": "qs-logos",
+							"rotulo": "Empresas que já repensaram com a gente",
+							"limite": 6
+						},
+						{
+							"_type": "cta_faixa",
+							"_version": 1,
+							"_key": "qs-cta",
+							"titulo": "Vamos repensar\njuntos?",
+							"botao_texto": "Fale com a gente",
+							"botao_link": "/contato"
+						}
+					]
+				}
+			},
+			{
+				"id": "pg-solucoes",
+				"slug": "solucoes",
+				"status": "published",
+				"data": {
+					"title": "Nossas soluções",
+					"conteudo": [
+						{
+							"_type": "hero",
+							"_version": 1,
+							"_key": "sol-hero",
+							"rotulo": "Nossas soluções",
+							"titulo": "Do diagnóstico\nà execução.",
+							"subtitulo": "Quatro frentes que podem ser contratadas separadamente ou combinadas em um único projeto — sempre com indicadores definidos desde o início.",
+							"fundo_escuro": false,
+							"mostrar_trilha": true
+						},
+						{
+							"_type": "lista_solucoes",
+							"_version": 1,
+							"_key": "sol-lista",
+							"formato_linhas": true
+						},
+						{
+							"_type": "texto_duas_colunas",
+							"_version": 1,
+							"_key": "sol-combina",
+							"rotulo": "Como combinamos",
+							"titulo": "Um projeto,\num painel.",
+							"fundo_branco": true,
+							"texto": [
+								{
+									"_type": "block",
+									"_key": "b0031",
+									"style": "normal",
+									"markDefs": [],
+									"children": [
+										{
+											"_type": "span",
+											"_key": "s0032",
+											"text": "Cada solução tem escopo próprio, mas todas compartilham a mesma metodologia data driven: os indicadores definidos no diagnóstico guiam a estratégia, a execução e os ajustes.",
+											"marks": []
+										}
+									]
+								},
+								{
+									"_type": "block",
+									"_key": "b0033",
+									"style": "normal",
+									"markDefs": [],
+									"children": [
+										{
+											"_type": "span",
+											"_key": "s0034",
+											"text": "Projetos de inteligência de mercado e expansão, por exemplo, combinam pesquisa e diagnóstico com estratégia de marketing e uma governança de acompanhamento junto à liderança do cliente.",
+											"marks": []
+										}
+									]
+								}
+							],
+							"link_texto": "Conheça a metodologia",
+							"link_url": "/quem-somos"
+						},
+						{
+							"_type": "cta_faixa",
+							"_version": 1,
+							"_key": "sol-cta",
+							"titulo": "Não sabe por\nonde começar?",
+							"texto": "Uma conversa de diagnóstico ajuda a identificar qual frente faz mais sentido agora.",
+							"botao_texto": "Agendar conversa",
+							"botao_link": "/contato"
+						}
+					]
+				}
+			},
+			{
+				"id": "pg-cases",
+				"slug": "cases",
+				"status": "published",
+				"data": {
+					"title": "Cases",
+					"conteudo": [
+						{
+							"_type": "hero",
+							"_version": 1,
+							"_key": "cases-hero",
+							"rotulo": "Cases",
+							"titulo": "Resultados que\na gente mede.",
+							"subtitulo": "Cada case mostra o desafio, o que fizemos e os números que mudaram — com autorização dos clientes.",
+							"fundo_escuro": true,
+							"mostrar_trilha": true
+						},
+						{
+							"_type": "grade_cases",
+							"_version": 1,
+							"_key": "cases-grade",
+							"mostrar_filtro": true
+						},
+						{
+							"_type": "cta_faixa",
+							"_version": 1,
+							"_key": "cases-cta",
+							"titulo": "O próximo case\npode ser o seu.",
+							"botao_texto": "Vamos conversar",
+							"botao_link": "/contato"
+						}
+					]
+				}
+			},
+			{
+				"id": "pg-insights",
+				"slug": "insights",
+				"status": "published",
+				"data": {
+					"title": "Insights",
+					"conteudo": [
+						{
+							"_type": "hero",
+							"_version": 1,
+							"_key": "ins-hero",
+							"rotulo": "Insights",
+							"titulo": "Para\nrepensar.",
+							"subtitulo": "Análises e ideias sobre marketing, dados e inovação — publicadas aqui e compartilhadas no LinkedIn.",
+							"fundo_escuro": false,
+							"mostrar_trilha": true
+						},
+						{
+							"_type": "grade_insights",
+							"_version": 1,
+							"_key": "ins-grade",
+							"por_pagina": 6
+						},
+						{
+							"_type": "cta_faixa",
+							"_version": 1,
+							"_key": "ins-cta",
+							"titulo": "Acompanhe\nno LinkedIn.",
+							"texto": "Cada novo artigo é compartilhado na nossa página — siga para receber no seu feed.",
+							"botao_texto": "Seguir a Rethink",
+							"botao_link": "https://www.linkedin.com/"
+						}
+					]
+				}
+			},
+			{
+				"id": "pg-contato",
+				"slug": "contato",
+				"status": "published",
+				"data": {
+					"title": "Contato",
+					"conteudo": [
+						{
+							"_type": "contato",
+							"_version": 1,
+							"_key": "contato-form",
+							"rotulo": "Contato",
+							"titulo": "Let’s\nRethink\ntogether.",
+							"introducao": "Conte o momento da sua empresa e o que você quer repensar.",
+							"mostrar_canais": true,
+							"mostrar_formulario": true,
+							"titulo_pagina": true
+						}
+					]
+				}
+			},
+			{
+				"id": "pg-privacidade",
+				"slug": "privacidade",
+				"status": "published",
+				"data": {
+					"title": "Política de Privacidade",
+					"conteudo": [
+						{
+							"_type": "hero",
+							"_version": 1,
+							"_key": "priv-hero",
+							"titulo": "Política de\nPrivacidade.",
+							"fundo_escuro": false,
+							"mostrar_trilha": true
+						},
+						{
+							"_type": "texto_longo",
+							"_version": 1,
+							"_key": "priv-texto",
+							"aviso": "Estrutura de página. O texto definitivo precisa ser redigido e validado por assessoria jurídica conforme a LGPD (Lei 13.709/2018).",
+							"atualizado_em": "Última atualização: [data]",
+							"conteudo": [
+								{
+									"_type": "block",
+									"_key": "b0035",
+									"style": "h2",
+									"markDefs": [],
+									"children": [
+										{
+											"_type": "span",
+											"_key": "s0036",
+											"text": "1. Quem somos",
+											"marks": []
+										}
+									]
+								},
+								{
+									"_type": "block",
+									"_key": "b0037",
+									"style": "normal",
+									"markDefs": [],
+									"children": [
+										{
+											"_type": "span",
+											"_key": "s0038",
+											"text": "[Razão social, CNPJ e endereço da Rethink Consultoria como controladora dos dados.]",
+											"marks": []
+										}
+									]
+								},
+								{
+									"_type": "block",
+									"_key": "b0039",
+									"style": "h2",
+									"markDefs": [],
+									"children": [
+										{
+											"_type": "span",
+											"_key": "s0040",
+											"text": "2. Dados que coletamos",
+											"marks": []
+										}
+									]
+								},
+								{
+									"_type": "block",
+									"_key": "b0041",
+									"style": "normal",
+									"markDefs": [],
+									"children": [
+										{
+											"_type": "span",
+											"_key": "s0042",
+											"text": "[Formulário de contato: nome, empresa, e-mail, telefone (opcional), solução de interesse e mensagem. Dados de navegação, conforme o consentimento de cookies.]",
+											"marks": []
+										}
+									]
+								},
+								{
+									"_type": "block",
+									"_key": "b0043",
+									"style": "h2",
+									"markDefs": [],
+									"children": [
+										{
+											"_type": "span",
+											"_key": "s0044",
+											"text": "3. Para que usamos",
+											"marks": []
+										}
+									]
+								},
+								{
+									"_type": "block",
+									"_key": "b0045",
+									"style": "normal",
+									"markDefs": [],
+									"children": [
+										{
+											"_type": "span",
+											"_key": "s0046",
+											"text": "[Responder ao contato e, se autorizado, enviar conteúdos. Melhorar o site com métricas agregadas.]",
+											"marks": []
+										}
+									]
+								},
+								{
+									"_type": "block",
+									"_key": "b0047",
+									"style": "h2",
+									"markDefs": [],
+									"children": [
+										{
+											"_type": "span",
+											"_key": "s0048",
+											"text": "4. Base legal",
+											"marks": []
+										}
+									]
+								},
+								{
+									"_type": "block",
+									"_key": "b0049",
+									"style": "normal",
+									"markDefs": [],
+									"children": [
+										{
+											"_type": "span",
+											"_key": "s0050",
+											"text": "[Hipóteses legais aplicáveis a cada finalidade — a definir com o jurídico.]",
+											"marks": []
+										}
+									]
+								},
+								{
+									"_type": "block",
+									"_key": "b0051",
+									"style": "h2",
+									"markDefs": [],
+									"children": [
+										{
+											"_type": "span",
+											"_key": "s0052",
+											"text": "5. Compartilhamento",
+											"marks": []
+										}
+									]
+								},
+								{
+									"_type": "block",
+									"_key": "b0053",
+									"style": "normal",
+									"markDefs": [],
+									"children": [
+										{
+											"_type": "span",
+											"_key": "s0054",
+											"text": "[Operadores envolvidos — ex.: Cloudflare (hospedagem, e-mail) e Google (métricas, com consentimento) — e transferência internacional.]",
+											"marks": []
+										}
+									]
+								},
+								{
+									"_type": "block",
+									"_key": "b0055",
+									"style": "h2",
+									"markDefs": [],
+									"children": [
+										{
+											"_type": "span",
+											"_key": "s0056",
+											"text": "6. Cookies e métricas",
+											"marks": []
+										}
+									]
+								},
+								{
+									"_type": "block",
+									"_key": "b0057",
+									"style": "normal",
+									"markDefs": [],
+									"children": [
+										{
+											"_type": "span",
+											"_key": "s0058",
+											"text": "[Google Tag Manager e Google Analytics, carregados só após o seu consentimento no aviso de cookies.]",
+											"marks": []
+										}
+									]
+								},
+								{
+									"_type": "block",
+									"_key": "b0059",
+									"style": "h2",
+									"markDefs": [],
+									"children": [
+										{
+											"_type": "span",
+											"_key": "s0060",
+											"text": "7. Retenção e segurança",
+											"marks": []
+										}
+									]
+								},
+								{
+									"_type": "block",
+									"_key": "b0061",
+									"style": "normal",
+									"markDefs": [],
+									"children": [
+										{
+											"_type": "span",
+											"_key": "s0062",
+											"text": "[Contatos recebidos pelo formulário são guardados por até 24 meses e depois excluídos automaticamente.]",
+											"marks": []
+										}
+									]
+								},
+								{
+									"_type": "block",
+									"_key": "b0063",
+									"style": "h2",
+									"markDefs": [],
+									"children": [
+										{
+											"_type": "span",
+											"_key": "s0064",
+											"text": "8. Seus direitos",
+											"marks": []
+										}
+									]
+								},
+								{
+									"_type": "block",
+									"_key": "b0065",
+									"style": "normal",
+									"markDefs": [],
+									"children": [
+										{
+											"_type": "span",
+											"_key": "s0066",
+											"text": "[Confirmação, acesso, correção, anonimização, portabilidade, eliminação e revogação do consentimento — e como exercê-los.]",
+											"marks": []
+										}
+									]
+								},
+								{
+									"_type": "block",
+									"_key": "b0067",
+									"style": "h2",
+									"markDefs": [],
+									"children": [
+										{
+											"_type": "span",
+											"_key": "s0068",
+											"text": "9. Contato do encarregado",
+											"marks": []
+										}
+									]
+								},
+								{
+									"_type": "block",
+									"_key": "b0069",
+									"style": "normal",
+									"markDefs": [],
+									"children": [
+										{
+											"_type": "span",
+											"_key": "s0070",
+											"text": "[Nome ou canal do encarregado (DPO) e e-mail para solicitações.]",
+											"marks": []
+										}
+									]
+								}
+							],
+							"mostrar_indice": true
+						}
+					]
+				}
+			},
+			{
+				"id": "pg-404",
+				"slug": "nao-encontrada",
+				"status": "published",
+				"data": {
+					"title": "Página não encontrada",
+					"conteudo": [
+						{
+							"_type": "hero",
+							"_version": 1,
+							"_key": "nf-hero",
+							"rotulo": "Erro 404 · página não encontrada",
+							"titulo": "Vamos\nrepensar\no caminho.",
+							"subtitulo": "O endereço que você procurou não existe ou mudou de lugar. Estes caminhos podem ajudar:",
+							"cta1_texto": "Ir para o início",
+							"cta1_link": "/",
+							"cta2_texto": "Nossas soluções",
+							"cta2_link": "/solucoes",
+							"imagem": {
+								"$media": {
+									"url": "https://pub-da52ac9b2d454fe8996979e23bdad69a.r2.dev/seed/ins-escada.jpg",
+									"alt": "Escada em espiral vista de baixo",
+									"filename": "ins-escada.jpg"
+								}
+							},
+							"fundo_escuro": true,
+							"mostrar_trilha": false
+						}
+					]
+				}
+			}
+		],
+		"cases": [
+			{
+				"id": "case-exemplo-a",
+				"slug": "exemplo-midia",
+				"status": "draft",
+				"data": {
+					"title": "[Cliente A]",
+					"setor": "[Setor]",
+					"solucao": "$ref:sol-midia",
+					"periodo": "[mês/ano – mês/ano]",
+					"frase_titulo": "[Frase-título do case: o resultado principal em linguagem simples.]",
+					"excerpt": "[Desafio e solução em uma frase.]",
+					"imagem": {
+						"$media": {
+							"url": "https://pub-da52ac9b2d454fe8996979e23bdad69a.r2.dev/seed/case-varejo.jpg",
+							"alt": "[Imagem do projeto — ilustrativa]",
+							"filename": "case-varejo.jpg"
+						}
+					},
+					"metricas": [
+						{
+							"valor": "[+00%]",
+							"indicador": "[Indicador e período de comparação]"
+						},
+						{
+							"valor": "[00x]",
+							"indicador": "[Indicador e período de comparação]"
+						}
+					],
+					"contexto": [
+						{
+							"_type": "block",
+							"_key": "b0071",
+							"style": "normal",
+							"markDefs": [],
+							"children": [
+								{
+									"_type": "span",
+									"_key": "s0072",
+									"text": "[Quem é o cliente, em que momento estava e por que procurou a Rethink.]",
+									"marks": []
+								}
+							]
+						}
+					],
+					"desafio": [
+						{
+							"_type": "block",
+							"_key": "b0073",
+							"style": "normal",
+							"markDefs": [],
+							"children": [
+								{
+									"_type": "span",
+									"_key": "s0074",
+									"text": "[O problema de negócio em termos mensuráveis: qual indicador precisava mudar.]",
+									"marks": []
+								}
+							]
+						}
+					],
+					"o_que_fizemos": [
+						{
+							"_type": "block",
+							"_key": "b0075",
+							"style": "normal",
+							"markDefs": [],
+							"children": [
+								{
+									"_type": "span",
+									"_key": "s0076",
+									"text": "[Abordagem, etapas da metodologia aplicadas e principais entregas.]",
+									"marks": []
+								}
+							]
+						}
+					],
+					"entregas": [
+						{
+							"item": "[Entrega 1]"
+						},
+						{
+							"item": "[Entrega 2]"
+						},
+						{
+							"item": "[Entrega 3]"
+						}
+					],
+					"resultado": [
+						{
+							"_type": "block",
+							"_key": "b0077",
+							"style": "normal",
+							"markDefs": [],
+							"children": [
+								{
+									"_type": "span",
+									"_key": "s0078",
+									"text": "[O que mudou, com os números acima explicados — e o que ficou de cultura no time do cliente.]",
+									"marks": []
+								}
+							]
+						}
+					],
+					"depoimento": "[Depoimento real do cliente, com autorização por escrito.]",
+					"depoimento_autor": "[Nome] · [Cargo], [Cliente]",
+					"destaque": true,
+					"ordem": 1
+				}
+			},
+			{
+				"id": "case-exemplo-b",
+				"slug": "exemplo-data-driven",
+				"status": "draft",
+				"data": {
+					"title": "[Cliente B]",
+					"setor": "[Setor]",
+					"solucao": "$ref:sol-dados",
+					"excerpt": "[Desafio e solução em uma frase.]",
+					"imagem": {
+						"$media": {
+							"url": "https://pub-da52ac9b2d454fe8996979e23bdad69a.r2.dev/seed/case-financeiro.jpg",
+							"alt": "[Imagem do projeto — ilustrativa]",
+							"filename": "case-financeiro.jpg"
+						}
+					},
+					"metricas": [
+						{
+							"valor": "[+00%]",
+							"indicador": "[indicador]"
+						}
+					],
+					"ordem": 2
+				}
+			},
+			{
+				"id": "case-exemplo-c",
+				"slug": "exemplo-war-room",
+				"status": "draft",
+				"data": {
+					"title": "[Cliente C]",
+					"setor": "[Setor]",
+					"solucao": "$ref:sol-warroom",
+					"excerpt": "[Desafio e solução em uma frase.]",
+					"imagem": {
+						"$media": {
+							"url": "https://pub-da52ac9b2d454fe8996979e23bdad69a.r2.dev/seed/case-estudio.jpg",
+							"alt": "[Imagem do projeto — ilustrativa]",
+							"filename": "case-estudio.jpg"
+						}
+					},
+					"metricas": [
+						{
+							"valor": "[+00%]",
+							"indicador": "[indicador]"
+						}
+					],
+					"ordem": 3
+				}
+			}
+		],
+		"insights": [
+			{
+				"id": "ins-exemplo",
+				"slug": "exemplo-de-artigo",
+				"status": "draft",
+				"bylines": [
+					{
+						"byline": "byline-roberta"
+					}
+				],
+				"taxonomies": {
+					"categoria": [
+						"dados"
+					]
+				},
+				"data": {
+					"title": "[Título do artigo — claro, com a palavra-chave principal]",
+					"linha_fina": "[Linha fina: o que o leitor vai aprender, em uma frase.]",
+					"excerpt": "[Resumo de duas linhas, usado também como meta description.]",
+					"capa": {
+						"$media": {
+							"url": "https://pub-da52ac9b2d454fe8996979e23bdad69a.r2.dev/seed/ins-escada.jpg",
+							"alt": "[Descrição da imagem de capa]",
+							"filename": "ins-escada.jpg"
+						}
+					},
+					"legenda_capa": "[Legenda e crédito da imagem]",
+					"content": [
+						{
+							"_type": "block",
+							"_key": "b0079",
+							"style": "normal",
+							"markDefs": [],
+							"children": [
+								{
+									"_type": "span",
+									"_key": "s0080",
+									"text": "[Parágrafo de abertura: o problema ou a pergunta que o artigo responde.]",
+									"marks": []
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "b0081",
+							"style": "normal",
+							"markDefs": [],
+							"children": [
+								{
+									"_type": "span",
+									"_key": "s0082",
+									"text": "[Segundo parágrafo: contexto e por que isso importa agora.]",
+									"marks": []
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "b0083",
+							"style": "h2",
+							"markDefs": [],
+							"children": [
+								{
+									"_type": "span",
+									"_key": "s0084",
+									"text": "[Intertítulo 1]",
+									"marks": []
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "b0085",
+							"style": "normal",
+							"markDefs": [],
+							"children": [
+								{
+									"_type": "span",
+									"_key": "s0086",
+									"text": "[Desenvolvimento.]",
+									"marks": []
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "b0087",
+							"style": "h2",
+							"markDefs": [],
+							"children": [
+								{
+									"_type": "span",
+									"_key": "s0088",
+									"text": "[Intertítulo 2]",
+									"marks": []
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "b0089",
+							"style": "normal",
+							"markDefs": [],
+							"children": [
+								{
+									"_type": "span",
+									"_key": "s0090",
+									"text": "[Desenvolvimento.]",
+									"marks": []
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "b0091",
+							"style": "blockquote",
+							"markDefs": [],
+							"children": [
+								{
+									"_type": "span",
+									"_key": "s0092",
+									"text": "[Frase de destaque do próprio artigo.]",
+									"marks": []
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "b0093",
+							"style": "h2",
+							"markDefs": [],
+							"children": [
+								{
+									"_type": "span",
+									"_key": "s0094",
+									"text": "[Conclusão: e agora?]",
+									"marks": []
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "b0095",
+							"style": "normal",
+							"markDefs": [],
+							"children": [
+								{
+									"_type": "span",
+									"_key": "s0096",
+									"text": "[Fechamento com recomendação prática e convite para conversar.]",
+									"marks": []
+								}
+							]
+						}
+					],
+					"tempo_leitura": 6,
+					"destaque": true
+				}
+			}
+		],
+		"dados_empresa": [
+			{
+				"id": "empresa",
+				"slug": "rethink",
+				"status": "published",
+				"data": {
+					"title": "Rethink Consultoria",
+					"razao_social": "[Razão social]",
+					"cnpj": "[00.000.000/0000-00]",
+					"ano_fundacao": "[ano]",
+					"email": "[contato@rethink.ad]",
+					"whatsapp": "[+55 00 00000-0000]",
+					"whatsapp_numero": "",
+					"endereco": "",
+					"cidade": "Porto Alegre",
+					"uf": "RS",
+					"cep": "",
+					"linkedin_url": "https://www.linkedin.com/",
+					"instagram_url": "https://www.instagram.com/",
+					"instagram_perfil": "@[perfil]",
+					"aviso_texto": "",
+					"aviso_link": "/insights",
+					"cta_titulo": "Vamos repensar\njuntos?",
+					"cta_botao": "Fale com a gente",
+					"cta_case_titulo": "Desafio parecido?",
+					"descricao_organizacao": "A Rethink é uma consultoria de marketing de Porto Alegre que une estratégia, inteligência de dados e gestão da inovação, do planejamento à execução, com decisões baseadas em dados e foco em resultado."
+				}
+			}
+		]
+	}
+}

@@ -1,0 +1,359 @@
+---
+/** Página de uma solução. */
+import { decodeSlug, getEmDashEntry, getSeoMeta } from "emdash";
+import { Image, PortableText } from "emdash/ui";
+import Base from "../../layouts/Base.astro";
+import CardCase from "../../components/CardCase.astro";
+import CtaFaixa from "../../components/blocos/CtaFaixa.astro";
+import Faq from "../../components/blocos/Faq.astro";
+import Linhas from "../../components/Linhas.astro";
+import Trilha from "../../components/Trilha.astro";
+import {
+	cachear,
+	getCases,
+	getClientes,
+	getEmpresa,
+	getSolucoes,
+	indice,
+	nomeCliente,
+	refId,
+	urlImagem,
+	type Entrada,
+} from "../../lib/site";
+
+const slug = decodeSlug(Astro.params.slug);
+if (!slug) return Astro.rewrite("/404");
+const { entry, cacheHint } = await getEmDashEntry("solucoes", slug);
+if (!entry) return Astro.rewrite("/404");
+const s = entry as unknown as Entrada;
+const [so, ca, cl, em] = await Promise.all([getSolucoes(), getCases(), getClientes(), getEmpresa()]);
+cachear(Astro, cacheHint, so.cacheHint, ca.cacheHint, cl.cacheHint, em.cacheHint);
+
+const origin = Astro.site?.origin ?? Astro.url.origin;
+const d = s.data;
+const seo = getSeoMeta(entry, {
+	siteUrl: origin,
+	path: `/solucoes/${s.id}`,
+	defaultDescription: d.excerpt,
+	defaultOgImage: urlImagem(d.imagem, origin),
+});
+const frentes = (Array.isArray(d.frentes) ? d.frentes : []).filter((f: { titulo?: string }) => f?.titulo);
+const clientes = indice(cl.todos);
+const relacionados = ca.cases.filter((c) => {
+	const r = refId(c.data.solucao);
+	return r === String(d.id) || r === s.id;
+});
+const outras = so.solucoes.filter((o) => o.id !== s.id);
+const faq = Array.isArray(d.faq) ? d.faq : [];
+const empresa = em.empresa;
+const nome = String(d.title ?? "");
+
+const servico = {
+	"@context": "https://schema.org",
+	"@type": "Service",
+	"@id": `${origin}/solucoes/${s.id}#servico`,
+	name: nome,
+	serviceType: "Consultoria de marketing",
+	description: d.introducao || d.excerpt,
+	provider: { "@id": `${origin}/#organizacao` },
+	areaServed: "BR",
+	url: `${origin}/solucoes/${s.id}`,
+	image: urlImagem(d.imagem, origin),
+	hasOfferCatalog: frentes.length
+		? {
+				"@type": "OfferCatalog",
+				name: d.frentes_titulo || "Frentes de trabalho",
+				itemListElement: frentes.map((f: { titulo: string }) => ({
+					"@type": "Offer",
+					itemOffered: { "@type": "Service", name: f.titulo },
+				})),
+			}
+		: undefined,
+};
+let n = 0;
+const proximo = () => `${String(++n).padStart(2, "0")} — `;
+---
+
+<Base
+	title={seo.title}
+	description={seo.description}
+	image={seo.ogImage}
+	canonical={seo.canonical}
+	robots={seo.robots}
+	content={{ collection: "solucoes", id: d.id, slug: s.id }}
+	jsonld={[servico]}
+>
+	<section class="escuro">
+		<div class="container sol-hero">
+			<Trilha itens={[{ nome: "Nossas soluções", url: "/solucoes" }, { nome }]} />
+			<span class="rotulo sol-hero__rotulo">Solução {d.numero}</span>
+			<h1 class="titulo-1 sol-hero__titulo" {...s.edit?.title}>{nome}.</h1>
+			{d.introducao && <p class="lead">{d.introducao}</p>}
+			<a href={`/contato`} class="botao sol-hero__cta">Quero essa conversa <span aria-hidden="true">→</span></a>
+		</div>
+	</section>
+
+	{
+		d.imagem && (
+			<div class="sol-img">
+				<Image image={d.imagem} priority sizes="100vw" />
+			</div>
+		)
+	}
+
+	{
+		(d.para_que_titulo || d.para_que_texto) && (
+			<section aria-labelledby="h-paraque">
+				<div class="container secao duas-colunas">
+					<div class="pilha">
+						<span class="rotulo">{proximo()}Para quê</span>
+						<h2 id="h-paraque" class="titulo-2">
+							<Linhas texto={d.para_que_titulo || "Para quê."} />
+						</h2>
+					</div>
+					<div class="prosa sol-paraque">{d.para_que_texto && <PortableText value={d.para_que_texto} />}</div>
+				</div>
+			</section>
+		)
+	}
+
+	{
+		frentes.length > 0 && (
+			<section aria-labelledby="h-frentes" class="fundo-branco">
+				<div class="container secao pilha-48">
+					<div class="cab-secao">
+						<div class="pilha">
+							<span class="rotulo">{proximo()}O que fazemos</span>
+							<h2 id="h-frentes" class="titulo-2">
+								<Linhas texto={d.frentes_titulo || "Frentes de trabalho."} />
+							</h2>
+						</div>
+						<span class="sol-qtd">
+							{frentes.length} {d.frentes_unidade || "frentes"}
+						</span>
+					</div>
+					<ol class="frentes">
+						{frentes.map((f: { titulo: string }, i: number) => (
+							<li>
+								<span class="frentes__num">{String(i + 1).padStart(2, "0")}</span>
+								<span class="frentes__nome">{f.titulo}</span>
+							</li>
+						))}
+					</ol>
+					{d.frentes_nota && <p class="sol-nota">{d.frentes_nota}</p>}
+				</div>
+			</section>
+		)
+	}
+
+	{
+		relacionados.length > 0 && (
+			<section aria-labelledby="h-rel" class="escuro">
+				<div class="container secao pilha-40">
+					<div class="cab-secao">
+						<div class="pilha">
+							<span class="rotulo">{proximo()}Na prática</span>
+							<h2 id="h-rel" class="titulo-2">
+								Cases com
+								<br />
+								esta solução.
+							</h2>
+						</div>
+						<a href={`/cases?solucao=${s.id}`} class="link-mono">
+							Todos os cases <span aria-hidden="true">→</span>
+						</a>
+					</div>
+					<div class="sol-cases">
+						{relacionados.slice(0, 3).map((c) => (
+							<CardCase caso={c} cliente={nomeCliente(c, clientes)} variante="escuro" />
+						))}
+					</div>
+				</div>
+			</section>
+		)
+	}
+
+	{faq.length > 0 && <Faq value={{ _key: "sol-faq", rotulo: `${proximo()}Perguntas frequentes`, titulo: "Dúvidas." }} perguntas={faq} />}
+
+	{
+		outras.length > 0 && (
+			<nav aria-label="Outras soluções" class="outras">
+				<div class="container outras__corpo">
+					<span class="mono-caps">Outras soluções</span>
+					<div class="outras__grade">
+						{outras.map((o) => (
+							<a href={`/solucoes/${o.id}`}>
+								<span class="outras__num">{o.data.numero}</span>
+								<span class="display outras__nome">
+									{o.data.title} <span aria-hidden="true">→</span>
+								</span>
+							</a>
+						))}
+					</div>
+				</div>
+			</nav>
+		)
+	}
+
+	<CtaFaixa
+		value={{
+			_key: "sol-cta",
+			titulo: empresa.cta_titulo || "Vamos repensar\njuntos?",
+			botao_texto: empresa.cta_botao || "Fale com a gente",
+			botao_link: "/contato",
+		}}
+	/>
+</Base>
+
+<style>
+	.sol-hero {
+		display: flex;
+		flex-direction: column;
+		gap: 28px;
+		padding-block: 24px 96px;
+	}
+	.sol-hero__rotulo {
+		padding-top: 48px;
+	}
+	.sol-hero__titulo {
+		max-width: 1100px;
+		font-size: clamp(48px, 8vw, 116px);
+	}
+	.sol-hero__cta {
+		align-self: flex-start;
+	}
+	.sol-img {
+		height: 520px;
+		background: var(--texto);
+	}
+	.sol-img :global(img) {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+	.sol-paraque {
+		font-size: 19px;
+	}
+	.sol-paraque :global(p:first-child) {
+		color: var(--preto);
+	}
+	.sol-paraque :global(p:last-child:not(:first-child)) {
+		font-size: 16px;
+		color: var(--cinza);
+	}
+	.pilha-48 {
+		display: flex;
+		flex-direction: column;
+		gap: 48px;
+	}
+	.pilha-40 {
+		display: flex;
+		flex-direction: column;
+		gap: 40px;
+	}
+	.sol-qtd {
+		font-family: var(--f-mono);
+		font-size: 14px;
+		color: var(--cinza);
+	}
+	.frentes {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+		gap: 0 32px;
+		padding: 0;
+		list-style: none;
+		border-top: 1px solid var(--preto);
+	}
+	.frentes li {
+		display: flex;
+		gap: 20px;
+		align-items: baseline;
+		padding: 24px 0;
+		border-bottom: 1px solid var(--linha);
+	}
+	.frentes__num {
+		flex: 0 0 auto;
+		font-family: var(--f-mono);
+		font-size: 13px;
+		color: var(--azul);
+	}
+	.frentes__nome {
+		font-size: 18px;
+		line-height: 1.35;
+		font-weight: 500;
+		color: var(--preto);
+	}
+	.sol-nota {
+		max-width: 820px;
+		font-size: 16px;
+		color: var(--cinza);
+	}
+	.sol-cases {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+		gap: 24px;
+	}
+	.outras {
+		border-top: 1px solid var(--preto);
+	}
+	.outras__corpo {
+		display: flex;
+		flex-direction: column;
+		gap: 24px;
+		padding-block: 48px 96px;
+	}
+	.outras__grade {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+		gap: 24px;
+	}
+	.outras a {
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+		color: var(--preto);
+		text-decoration: none;
+	}
+	.outras a:hover .outras__nome {
+		color: var(--azul);
+	}
+	.outras__num {
+		font-family: var(--f-mono);
+		font-size: 12px;
+		color: var(--cinza);
+	}
+	.outras__nome {
+		font-size: 22px;
+		line-height: 1;
+	}
+	@media (max-width: 720px) {
+		.sol-hero {
+			padding-block: 16px 56px;
+			gap: 20px;
+		}
+		.sol-hero__rotulo {
+			padding-top: 24px;
+		}
+		.sol-hero__titulo {
+			font-size: clamp(40px, 12vw, 56px);
+		}
+		.sol-hero__cta {
+			align-self: stretch;
+		}
+		.sol-img {
+			height: 260px;
+		}
+		.sol-paraque {
+			font-size: 17px;
+		}
+		.frentes li {
+			padding: 18px 0;
+		}
+		.frentes__nome {
+			font-size: 16px;
+		}
+		.outras__corpo {
+			padding-block: 40px 64px;
+		}
+	}
+</style>

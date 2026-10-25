@@ -1,0 +1,120 @@
+---
+/** Grade com os logos dos clientes autorizados (coleção Clientes). */
+import { Image } from "emdash/ui";
+import { cachear, getClientes, link, type Dados } from "../../lib/site";
+
+interface Props {
+	value: Dados;
+}
+const { value: v } = Astro.props;
+const { clientes, cacheHint } = await getClientes();
+cachear(Astro, cacheHint);
+const limite = Number(v.limite) > 0 ? Number(v.limite) : 8;
+const lista = clientes.filter((c) => c.data.logo).slice(0, limite);
+const id = `h-${v._key}`;
+const admin = !!Astro.locals.user;
+---
+
+{
+	lista.length > 0 ? (
+		<section aria-labelledby={id} class="logos">
+			<div class="container logos__corpo">
+				<h2 id={id} class="mono-caps logos__titulo">
+					{v.rotulo || "Clientes"}
+				</h2>
+				<ul class="logos__grade">
+					{lista.map((c) => {
+						const site = link(c.data.site);
+						const img = <Image image={c.data.logo} alt={c.data.title} sizes="180px" />;
+						return (
+							<li>
+								{site ? (
+									<a href={site} target="_blank" rel="noopener noreferrer" aria-label={c.data.title}>
+										{img}
+									</a>
+								) : (
+									img
+								)}
+							</li>
+						);
+					})}
+				</ul>
+			</div>
+		</section>
+	) : (
+		admin && (
+			<section class="container logos__aviso">
+				<p>
+					<strong>Grade de logos oculta:</strong> nenhum cliente com logo e “uso autorizado” marcado.
+					<a href="/_emdash/admin/content/clientes">Cadastrar clientes</a>
+				</p>
+			</section>
+		)
+	)
+}
+
+<style>
+	.logos {
+		border-bottom: 1px solid var(--linha);
+	}
+	.logos__corpo {
+		display: flex;
+		flex-direction: column;
+		gap: 28px;
+		padding-block: 56px;
+	}
+	.logos__titulo {
+		font-weight: 500;
+		font-size: 13px;
+		letter-spacing: 0.12em;
+	}
+	.logos__grade {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+		gap: 1px;
+		padding: 0;
+		list-style: none;
+		background: var(--linha);
+		border: 1px solid var(--linha);
+	}
+	.logos__grade li {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		height: 104px;
+		padding: 20px;
+		background: var(--papel);
+	}
+	.logos__grade a {
+		display: contents;
+	}
+	.logos__grade :global(img) {
+		max-height: 56px;
+		width: auto;
+		max-width: 100%;
+		object-fit: contain;
+		filter: grayscale(1);
+		opacity: 0.8;
+		transition: opacity 0.2s ease, filter 0.2s ease;
+	}
+	.logos__grade li:hover :global(img) {
+		filter: none;
+		opacity: 1;
+	}
+	.logos__aviso {
+		padding-block: 24px;
+		font-size: 14px;
+		color: var(--cinza);
+	}
+	@media (max-width: 720px) {
+		.logos__corpo {
+			padding-block: 40px;
+		}
+		.logos__grade {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+		.logos__grade li {
+			height: 88px;
+		}
+	}
+</style>

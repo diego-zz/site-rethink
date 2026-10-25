@@ -1,0 +1,29 @@
+---
+import { decodeSlug, getEmDashEntry, getSeoMeta } from "emdash";
+import Base from "../layouts/Base.astro";
+import PaginaCMS from "../components/PaginaCMS.astro";
+import { cachear, padroesHero, type Entrada } from "../lib/site";
+
+const slug = decodeSlug(Astro.params.slug);
+if (!slug) return Astro.rewrite("/404");
+if (slug === "home") return Astro.redirect("/", 301);
+if (slug === "nao-encontrada") return Astro.rewrite("/404");
+
+const { entry, cacheHint } = await getEmDashEntry("paginas", slug);
+if (!entry) return Astro.rewrite("/404");
+cachear(Astro, cacheHint);
+const pagina = entry as unknown as Entrada;
+const origin = Astro.site?.origin ?? Astro.url.origin;
+const seo = getSeoMeta(entry, { siteUrl: origin, path: `/${pagina.id}`, ...padroesHero(pagina.data.conteudo, origin) });
+---
+
+<Base
+	title={seo.title}
+	description={seo.description}
+	image={seo.ogImage}
+	canonical={seo.canonical}
+	robots={seo.robots}
+	content={{ collection: "paginas", id: pagina.data.id, slug: pagina.id }}
+>
+	<PaginaCMS pagina={pagina} />
+</Base>

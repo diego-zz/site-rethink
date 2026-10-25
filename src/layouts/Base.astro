@@ -1,0 +1,217 @@
+---
+/**
+ * Layout de todas as páginas públicas.
+ * - <head>: título, SEO e Open Graph (EmDashHead), dados estruturados,
+ *   ícones e Consent Mode + GTM.
+ * - Corpo: barra de aviso, cabeçalho, conteúdo, rodapé e botão "Topo".
+ */
+import { env } from "cloudflare:workers";
+import { getMenuWithCacheHint, getSiteSettingsWithCacheHint } from "emdash";
+import { createPublicPageContext } from "emdash/page";
+import { EmDashBodyEnd, EmDashBodyStart, EmDashHead } from "emdash/ui";
+import Cabecalho from "../components/Cabecalho.astro";
+import Consentimento from "../components/Consentimento.astro";
+import Rodape from "../components/Rodape.astro";
+import { cachear, getEmpresa, link, urlWhatsapp } from "../lib/site";
+import "../styles/global.css";
+
+interface Props {
+	/** Título da página (sem o nome do site). Vazio = só o nome do site. */
+	title?: string;
+	description?: string | null;
+	image?: string | null;
+	canonical?: string | null;
+	robots?: string | null;
+	content?: { collection: string; id: string; slug?: string | null };
+	tipo?: "website" | "article";
+	artigo?: { publicado?: string | null; modificado?: string | null; autor?: string | null };
+	/** Objetos JSON-LD adicionais desta página. */
+	jsonld?: Record<string, unknown>[];
+	/** Página com fundo preto do começo ao fim (ex.: 404). */
+	escuro?: boolean;
+}
+
+const { title, description, image, canonical, robots, content, tipo = "website", artigo, jsonld = [], escuro } =
+	Astro.props;
+
+const [settingsR, principalR, rodapeR, legalR, empresaR] = await Promise.all([
+	getSiteSettingsWithCacheHint(),
+	getMenuWithCacheHint("principal"),
+	getMenuWithCacheHint("rodape"),
+	getMenuWithCacheHint("legal"),
+	getEmpresa(),
+]);
+cachear(Astro, settingsR.cacheHint, principalR.cacheHint, rodapeR.cacheHint, legalR.cacheHint, empresaR.cacheHint);
+
+const settings = settingsR.data ?? {};
+const empresa = empresaR.empresa;
+const siteName = settings.title || "Rethink Consultoria";
+const sep = settings.seo?.titleSeparator || "—";
+const fullTitle = title ? (title.includes(siteName) ? title : `${title} ${sep} ${siteName}`) : siteName;
+const origin = Astro.site?.origin ?? Astro.url.origin;
+const canonicalUrl = canonical ?? new URL(Astro.url.pathname, origin).href;
+const descricao = description || empresa.descricao_organizacao || settings.tagline || undefined;
+const vars = env as unknown as Record<string, string | undefined>;
+const noindex = vars.NOINDEX === "1";
+const gtmId = vars.PUBLIC_GTM_ID;
+
+const mapItens = (r: typeof principalR) =>
+	(r.data?.items ?? []).map((i) => ({ label: i.label, url: i.url, target: i.target }));
+
+const pageCtx = createPublicPageContext({
+	Astro,
+	kind: content ? "content" : "custom",
+	pageType: tipo,
+	title: fullTitle,
+	pageTitle: title ?? siteName,
+	description: descricao,
+	canonical: canonicalUrl,
+	image: image ?? new URL("/og-padrao.jpg", origin).href,
+	content,
+	seo: { ogImage: image, robots: noindex ? "noindex, nofollow" : robots },
+	articleMeta: artigo
+		? { publishedTime: artigo.publicado, modifiedTime: artigo.modificado, author: artigo.autor }
+		: undefined,
+	siteName,
+	siteUrl: origin,
+});
+
+const sameAs = [link(empresa.linkedin_url), link(empresa.instagram_url)].filter(
+	(u) => u && !/^https?:\/\/(www\.)?(linkedin|instagram)\.com\/?$/i.test(u),
+);
+const email = empresa.email && !/^\[/.test(empresa.email) ? empresa.email : undefined;
+const organizacao = {
+	"@context": "https://schema.org",
+	"@type": "ProfessionalService",
+	"@id": `${origin}/#organizacao`,
+	name: empresa.title || siteName,
+	legalName: empresa.razao_social && !/^\[/.test(empresa.razao_social) ? empresa.razao_social : undefined,
+	url: `${origin}/`,
+	logo: `${origin}/icon-512.png`,
+	image: `${origin}/og-padrao.jpg`,
+	description: empresa.descricao_organizacao || settings.tagline,
+	slogan: settings.tagline,
+	email,
+	telephone: empresa.whatsapp && !/^\[/.test(empresa.whatsapp) ? empresa.whatsapp : undefined,
+	foundingDate: empresa.ano_fundacao && /^\d{4}$/.test(empresa.ano_fundacao) ? empresa.ano_fundacao : undefined,
+	founder: { "@type": "Person", name: "Roberta Krause" },
+	areaServed: "BR",
+	knowsAbout: ["Marketing", "Data driven marketing", "Inteligência de mídia", "Gestão da inovação", "War room"],
+	address: empresa.cidade
+		? {
+				"@type": "PostalAddress",
+				streetAddress: empresa.endereco || undefined,
+				addressLocality: empresa.cidade,
+				addressRegion: empresa.uf || undefined,
+				postalCode: empresa.cep || undefined,
+				addressCountry: "BR",
+			}
+		: undefined,
+	sameAs: sameAs.length ? sameAs : undefined,
+	contactPoint: email
+		? { "@type": "ContactPoint", contactType: "sales", email, availableLanguage: "Portuguese", url: urlWhatsapp(empresa) }
+		: undefined,
+};
+const blocosJsonLd = [organizacao, ...jsonld].map((j) => JSON.stringify(j).replace(/</g, "\\u003c"));
+---
+
+<!doctype html>
+<html lang="pt-BR">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>{fullTitle}</title>
+		<EmDashHead page={pageCtx} />
+		{noindex && <meta name="robots" content="noindex, nofollow" />}
+		<meta name="theme-color" content="#000000" />
+		<meta name="format-detection" content="telephone=no" />
+		<link rel="icon" href="/favicon.ico" sizes="32x32" />
+		<link rel="icon" href="/icon-192.png" type="image/png" sizes="192x192" />
+		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+		<link rel="manifest" href="/site.webmanifest" />
+		<link rel="alternate" type="text/plain" href="/llms.txt" title="Resumo para modelos de linguagem" />
+		{blocosJsonLd.map((j) => <script type="application/ld+json" set:html={j} />)}
+		<Consentimento gtmId={noindex ? undefined : gtmId} />
+	</head>
+	<body class:list={{ escuro }}>
+		<EmDashBodyStart page={pageCtx} />
+		<a href="#conteudo" class="pular">Pular para o conteúdo</a>
+		<span id="topo"></span>
+		<Cabecalho itens={mapItens(principalR)} empresa={empresa} />
+		<main id="conteudo" tabindex="-1">
+			<slot />
+		</main>
+		<Rodape itens={mapItens(rodapeR)} legais={mapItens(legalR)} empresa={empresa} />
+		<a href="#topo" class="topo" aria-label="Voltar ao topo" hidden data-topo>
+			<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"></path></svg>
+			Topo
+		</a>
+		<EmDashBodyEnd page={pageCtx} />
+		<script>
+			const topo = document.querySelector<HTMLElement>("[data-topo]");
+			if (topo) {
+				let agendado = false;
+				const atualizar = () => {
+					agendado = false;
+					topo.hidden = window.scrollY < window.innerHeight * 0.8;
+				};
+				addEventListener(
+					"scroll",
+					() => {
+						if (!agendado) {
+							agendado = true;
+							requestAnimationFrame(atualizar);
+						}
+					},
+					{ passive: true },
+				);
+				atualizar();
+				topo.addEventListener("click", () => {
+					requestAnimationFrame(() => document.querySelector<HTMLElement>(".cabecalho__logo")?.focus());
+				});
+			}
+		</script>
+		<style>
+			main:focus {
+				outline: none;
+			}
+			.topo {
+				position: fixed;
+				right: 24px;
+				bottom: 24px;
+				z-index: 50;
+				width: 52px;
+				height: 52px;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				gap: 2px;
+				background: var(--preto);
+				color: var(--branco);
+				border: 1px solid var(--branco);
+				text-decoration: none;
+				font-family: var(--f-mono);
+				font-size: 10px;
+				letter-spacing: 0.08em;
+				text-transform: uppercase;
+			}
+			.topo[hidden] {
+				display: none;
+			}
+			.topo:hover {
+				background: var(--branco);
+				color: var(--preto);
+				border-color: var(--preto);
+			}
+			@media (max-width: 720px) {
+				.topo {
+					right: 16px;
+					bottom: 16px;
+					width: 48px;
+					height: 48px;
+				}
+			}
+		</style>
+	</body>
+</html>

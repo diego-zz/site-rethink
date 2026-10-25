@@ -1,0 +1,64 @@
+---
+import Linhas from "../Linhas.astro";
+import { externo, link, type Dados } from "../../lib/site";
+
+interface Props {
+	value: Dados;
+}
+const { value: v } = Astro.props;
+const url = link(v.botao_link);
+const id = `h-${v._key}`;
+---
+
+<section aria-labelledby={id} class="escuro faixa">
+	<div class="container secao faixa__corpo">
+		<h2 id={id} class="titulo-cta"><Linhas texto={v.titulo} /></h2>
+		{
+			(v.texto || (v.botao_texto && url)) && (
+				<div class="faixa__acao">
+					{v.texto && <p>{v.texto}</p>}
+					{v.botao_texto && url && (
+						<a
+							href={url}
+							class="botao botao--grande"
+							target={externo(url) ? "_blank" : undefined}
+							rel={externo(url) ? "noopener noreferrer" : undefined}
+						>
+							{v.botao_texto} <span aria-hidden="true">→</span>
+						</a>
+					)}
+				</div>
+			)
+		}
+	</div>
+</section>
+
+<style>
+	.faixa + :global(.faixa) {
+		border-top: 1px solid var(--linha-escura);
+	}
+	.faixa__corpo {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 32px 64px;
+		align-items: flex-end;
+		justify-content: space-between;
+	}
+	.faixa__acao {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+		max-width: 380px;
+	}
+	.faixa__acao p {
+		color: var(--linha);
+	}
+	.faixa__acao .botao {
+		align-self: flex-start;
+	}
+	@media (max-width: 480px) {
+		.faixa__acao .botao {
+			align-self: stretch;
+		}
+	}
+</style>

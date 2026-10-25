@@ -1,0 +1,108 @@
+---
+/** Todos os cases publicados, com filtro por solução (?solucao=slug). */
+import CardCase from "../CardCase.astro";
+import { cachear, getCases, getClientes, getSolucoes, indice, nomeCliente, refId, type Dados } from "../../lib/site";
+
+interface Props {
+	value: Dados;
+}
+const { value: v } = Astro.props;
+const [{ cases, cacheHint }, cl, so] = await Promise.all([getCases(), getClientes(), getSolucoes()]);
+cachear(Astro, cacheHint, cl.cacheHint, so.cacheHint);
+const clientes = indice(cl.todos);
+const solucoes = indice(so.solucoes);
+const solDe = (c: Dados) => solucoes.get(refId(c.data.solucao) ?? "");
+const usadas = so.solucoes.filter((s) => cases.some((c) => solDe(c)?.id === s.id));
+const filtro = Astro.url.searchParams.get("solucao") ?? "";
+const ativo = usadas.find((s) => s.id === filtro);
+const visiveis = ativo ? cases.filter((c) => solDe(c)?.id === ativo.id) : cases;
+const nomeCurto = (t: string) => t.replace(/ e Performance$/, "").replace(/^Aculturamento e /, "").replace(/ Marketing$/, "");
+---
+
+<section aria-labelledby="h-lista-cases">
+	<div class="container lista">
+		<h2 id="h-lista-cases" class="sr-only">Lista de cases</h2>
+		{
+			v.mostrar_filtro !== false && usadas.length > 1 && (
+				<nav class="chips" aria-label="Filtrar por solução">
+					<span class="mono-caps filtrar">Filtrar:</span>
+					<a href="/cases" class="chip" aria-current={!ativo ? "page" : undefined}>
+						Todas
+					</a>
+					{usadas.map((s) => (
+						<a href={`/cases?solucao=${s.id}`} class="chip" aria-current={ativo?.id === s.id ? "page" : undefined}>
+							{nomeCurto(s.data.title)}
+						</a>
+					))}
+					<span class="contagem" aria-live="polite">
+						{visiveis.length} {visiveis.length === 1 ? "case" : "cases"}
+					</span>
+				</nav>
+			)
+		}
+		{
+			visiveis.length > 0 ? (
+				<div class="grade">
+					{visiveis.map((c) => (
+						<CardCase caso={c} cliente={nomeCliente(c, clientes)} solucao={solDe(c)?.data.title} />
+					))}
+				</div>
+			) : (
+				<p class="vazio">
+					Os primeiros cases estão sendo preparados com autorização dos clientes. <a href="/contato">Fale com a gente</a> para conhecer projetos sob confidencialidade.
+				</p>
+			)
+		}
+	</div>
+</section>
+
+<style>
+	.lista {
+		display: flex;
+		flex-direction: column;
+		gap: 40px;
+		padding-block: 64px var(--secao);
+	}
+	.filtrar {
+		margin-right: 8px;
+	}
+	.contagem {
+		margin-left: auto;
+		font-family: var(--f-mono);
+		font-size: 13px;
+		color: var(--cinza);
+	}
+	.grade {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+		gap: 48px 32px;
+	}
+	.vazio {
+		max-width: 640px;
+		font-size: 18px;
+	}
+	@media (max-width: 720px) {
+		.lista {
+			padding-top: 32px;
+			gap: 28px;
+		}
+		.grade {
+			grid-template-columns: 1fr;
+			gap: 40px;
+		}
+		.chips {
+			flex-wrap: nowrap;
+			overflow-x: auto;
+			padding-bottom: 4px;
+			margin-inline: calc(-1 * var(--gutter));
+			padding-inline: var(--gutter);
+		}
+		.chip {
+			flex: 0 0 auto;
+		}
+		.contagem {
+			flex: 0 0 auto;
+			padding-left: 8px;
+		}
+	}
+</style>

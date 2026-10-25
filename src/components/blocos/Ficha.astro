@@ -1,0 +1,63 @@
+---
+/** Pares rótulo/valor. Logo após um "Título + texto", encosta nele. */
+import type { Dados } from "../../lib/site";
+
+interface Props {
+	value: Dados;
+}
+const itens: Dados[] = Array.isArray(Astro.props.value.itens) ? Astro.props.value.itens : [];
+---
+
+{
+	itens.length > 0 && (
+		<section class="bloco-ficha" aria-label="Dados rápidos">
+			<div class="container duas-colunas">
+				<div aria-hidden="true" class="ficha__vazio" />
+				<dl class="ficha">
+					{itens.map((i) => (
+						<div>
+							<dt class="mono-caps">{i.rotulo}</dt>
+							<dd class:list={{ ficha__num: /^[\d[]/.test(String(i.valor)) }}>{i.valor}</dd>
+						</div>
+					))}
+				</dl>
+			</div>
+		</section>
+	)
+}
+
+<style>
+	.bloco-ficha {
+		padding-bottom: var(--secao);
+	}
+	:global(.bloco-texto:not(.fundo-branco)) + .bloco-ficha {
+		margin-top: calc(-1 * var(--secao) + 28px);
+	}
+	.ficha {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+		gap: 20px;
+		padding-top: 20px;
+		border-top: 1px solid var(--preto);
+	}
+	.ficha div {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+	}
+	.ficha dd {
+		font-size: 20px;
+		line-height: 1.3;
+		color: var(--preto);
+	}
+	.ficha dd.ficha__num {
+		font-family: var(--f-mono);
+		font-size: 28px;
+		line-height: 1.1;
+	}
+	@media (max-width: 860px) {
+		.ficha__vazio {
+			display: none;
+		}
+	}
+</style>

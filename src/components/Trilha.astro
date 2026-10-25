@@ -1,0 +1,60 @@
+---
+/** Trilha de navegação (breadcrumb) com BreadcrumbList em JSON-LD. */
+interface Props {
+	itens: { nome: string; url?: string }[];
+}
+const { itens } = Astro.props;
+const todos = [{ nome: "Início", url: "/" }, ...itens];
+const origin = Astro.site?.origin ?? Astro.url.origin;
+const jsonld = {
+	"@context": "https://schema.org",
+	"@type": "BreadcrumbList",
+	itemListElement: todos.map((it, i) => ({
+		"@type": "ListItem",
+		position: i + 1,
+		name: it.nome,
+		...(it.url ? { item: new URL(it.url, origin).href } : { item: new URL(Astro.url.pathname, origin).href }),
+	})),
+};
+---
+
+<nav aria-label="Trilha" class="trilha">
+	<ol>
+		{
+			todos.map((it, i) =>
+				i < todos.length - 1 && it.url ? (
+					<li>
+						<a href={it.url}>{it.nome}</a>
+					</li>
+				) : (
+					<li aria-current="page">{it.nome}</li>
+				),
+			)
+		}
+	</ol>
+</nav>
+<script type="application/ld+json" set:html={JSON.stringify(jsonld)} />
+
+<style>
+	.trilha ol {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 4px;
+		padding: 0;
+		list-style: none;
+		font-family: var(--f-mono);
+		font-size: 12px;
+		letter-spacing: 0.08em;
+		color: var(--cinza);
+	}
+	.trilha li + li::before {
+		content: "/";
+		margin-right: 4px;
+	}
+	.trilha a {
+		color: inherit;
+	}
+	:global(.escuro) .trilha ol {
+		color: var(--muted-escuro);
+	}
+</style>

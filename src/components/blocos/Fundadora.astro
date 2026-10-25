@@ -1,0 +1,169 @@
+---
+/** Perfil de pessoa (sócia-fundadora), com dados estruturados Person. */
+import { Image, PortableText } from "emdash/ui";
+import { externo, link, textoPT, urlImagem, type Dados } from "../../lib/site";
+
+interface Props {
+	value: Dados;
+}
+const { value: v } = Astro.props;
+const numeros: Dados[] = Array.isArray(v.numeros) ? v.numeros : [];
+const url = link(v.link_url);
+const origin = Astro.site?.origin ?? Astro.url.origin;
+const id = `h-${v._key}`;
+const pessoa = {
+	"@context": "https://schema.org",
+	"@type": "Person",
+	name: v.nome,
+	jobTitle: v.cargo || undefined,
+	description: textoPT(v.texto).split("\n\n")[0] || undefined,
+	image: urlImagem(v.foto, origin),
+	worksFor: { "@id": `${origin}/#organizacao` },
+	sameAs: url && /^https?:\/\//.test(url) && !/linkedin\.com\/?$/.test(url) ? [url] : undefined,
+};
+---
+
+<section class="bloco-pessoa" aria-labelledby={id}>
+	<div class="container">
+		<div class="pessoa">
+			{
+				v.foto && (
+					<figure class="pessoa__retrato">
+						<Image image={v.foto} sizes="(max-width: 860px) 100vw, 460px" />
+						{v.legenda_foto && <figcaption class="mono-caps">{v.legenda_foto}</figcaption>}
+					</figure>
+				)
+			}
+			<div class="pessoa__texto">
+				{v.rotulo && <span class="rotulo">{v.rotulo}</span>}
+				<h2 id={id} class="display pessoa__nome">{v.nome}</h2>
+				{v.cargo && <span class="pessoa__cargo">{v.cargo}</span>}
+				{v.texto && <div class="prosa pessoa__prosa"><PortableText value={v.texto} /></div>}
+				{
+					numeros.length > 0 && (
+						<div class="pessoa__numeros">
+							{numeros.map((n) => (
+								<div>
+									<span class="pessoa__valor">{n.valor}</span>
+									<span>{n.legenda}</span>
+								</div>
+							))}
+						</div>
+					)
+				}
+				{
+					v.foto_evento && (
+						<figure class="pessoa__evento">
+							<Image image={v.foto_evento} sizes="(max-width: 860px) 100vw, 720px" />
+							{v.legenda_evento && <figcaption>{v.legenda_evento}</figcaption>}
+						</figure>
+					)
+				}
+				{
+					v.link_texto && url && (
+						<a href={url} class="link-mono" target={externo(url) ? "_blank" : undefined} rel="noopener noreferrer">
+							{v.link_texto} <span aria-hidden="true">→</span>
+						</a>
+					)
+				}
+			</div>
+		</div>
+	</div>
+</section>
+<script type="application/ld+json" set:html={JSON.stringify(pessoa).replace(/</g, "\\u003c")} />
+
+<style>
+	.bloco-pessoa {
+		padding-bottom: var(--secao);
+	}
+	.pessoa {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 48px 80px;
+		align-items: flex-start;
+		padding-top: 72px;
+		border-top: 1px solid var(--preto);
+	}
+	.pessoa__retrato {
+		flex: 1 1 340px;
+		max-width: 460px;
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+	}
+	.pessoa__retrato :global(img) {
+		width: 100%;
+		aspect-ratio: 4 / 5;
+		object-fit: cover;
+	}
+	.pessoa__retrato figcaption {
+		letter-spacing: 0.08em;
+	}
+	.pessoa__texto {
+		flex: 2 1 520px;
+		display: flex;
+		flex-direction: column;
+		gap: 22px;
+	}
+	.pessoa__nome {
+		font-size: clamp(40px, 4.5vw, 60px);
+		line-height: 0.92;
+	}
+	.pessoa__cargo {
+		font-family: var(--f-mono);
+		font-size: 13px;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: var(--preto);
+	}
+	.pessoa__prosa {
+		font-size: 17px;
+	}
+	.pessoa__numeros {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+		gap: 20px;
+		padding-top: 20px;
+		border-top: 2px solid var(--preto);
+	}
+	.pessoa__numeros div {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+		font-size: 14px;
+	}
+	.pessoa__valor {
+		font-family: var(--f-mono);
+		font-weight: 500;
+		font-size: 36px;
+		line-height: 1;
+		color: var(--azul);
+	}
+	.pessoa__evento {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+		margin-top: 8px;
+	}
+	.pessoa__evento :global(img) {
+		width: 100%;
+		height: 340px;
+		object-fit: cover;
+	}
+	.pessoa__evento figcaption {
+		font-size: 13px;
+		color: var(--cinza);
+	}
+	@media (max-width: 720px) {
+		.pessoa {
+			padding-top: 48px;
+			gap: 32px;
+		}
+		.pessoa__retrato {
+			max-width: none;
+		}
+		.pessoa__evento :global(img) {
+			height: 220px;
+		}
+	}
+</style>

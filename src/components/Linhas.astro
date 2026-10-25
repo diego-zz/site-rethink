@@ -1,0 +1,11 @@
+---
+/** Renderiza um texto do CMS respeitando as quebras de linha (Enter). */
+import { linhas } from "../lib/site";
+
+interface Props {
+	texto?: string | null;
+}
+const partes = linhas(Astro.props.texto);
+---
+
+{partes.map((l, i) => (i > 0 ? <><br />{l}</> : l))}

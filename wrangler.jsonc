@@ -1,0 +1,75 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	// Produção: www.rethink.ad. Homologação: `wrangler deploy --env preview`.
+	// Todos os recursos da Cloudflare deste projeto usam o prefixo rethink-ad.
+	"name": "rethink-ad-site",
+	"main": "./src/worker.ts",
+	"compatibility_date": "2026-10-01",
+	"compatibility_flags": ["nodejs_compat"],
+	"workers_dev": false,
+	"preview_urls": false,
+	"routes": [{ "pattern": "www.rethink.ad", "custom_domain": true }],
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "rethink-ad-db",
+			"database_id": "9c663a23-5b5e-4aac-ae0f-0cf1208791d9",
+		},
+	],
+	"r2_buckets": [{ "binding": "MEDIA", "bucket_name": "rethink-ad-media" }],
+	"kv_namespaces": [
+		{ "binding": "CACHE", "id": "30c35ea758f141a58c0c7660c825e41d" },
+		{ "binding": "INSTAGRAM", "id": "d23666671a7c41f5a91ae32399be2df4" },
+	],
+	"send_email": [{ "name": "EMAIL" }],
+	"images": { "binding": "IMAGES" },
+	// Publicação agendada, manutenção do EmDash, retenção de contatos e Instagram.
+	"triggers": { "crons": ["* * * * *"] },
+	"vars": {
+		"EMDASH_SITE_URL": "https://www.rethink.ad",
+		// Quem recebe o aviso de novo contato (vários: separe por vírgula).
+		"CONTACT_NOTIFY_TO": "diegodieh@gmail.com",
+		// Remetente: precisa pertencer a um domínio cadastrado no Email Sending.
+		"CONTACT_NOTIFY_FROM": "site@rethink.ad",
+		// Meses até os contatos recebidos serem excluídos (LGPD).
+		"CONTACT_RETENTION_MONTHS": "24",
+		"PUBLIC_GTM_ID": "GTM-PMBGLB5P",
+		// Chave pública do Turnstile (rethink-ad-turnstile). Preencher na fase 4.
+		"PUBLIC_TURNSTILE_SITE_KEY": "",
+	},
+	"observability": { "enabled": true, "head_sampling_rate": 1 },
+	"upload_source_maps": true,
+	"env": {
+		"preview": {
+			"name": "rethink-ad-site-preview",
+			"workers_dev": true,
+			"routes": [],
+			"d1_databases": [
+				{
+					"binding": "DB",
+					"database_name": "rethink-ad-db-preview",
+					"database_id": "7d8787e3-e570-4ce2-b5b5-f946277d5699",
+				},
+			],
+			"r2_buckets": [{ "binding": "MEDIA", "bucket_name": "rethink-ad-media-preview" }],
+			"kv_namespaces": [
+				{ "binding": "CACHE", "id": "ad21866934654a4eb6f21b06a3004e21" },
+				{ "binding": "INSTAGRAM", "id": "779150829ec3486db3eaa12a7c531dfd" },
+			],
+			"send_email": [{ "name": "EMAIL" }],
+			"images": { "binding": "IMAGES" },
+			"triggers": { "crons": ["*/5 * * * *"] },
+			"vars": {
+				"EMDASH_SITE_URL": "https://rethink-ad-site-preview.ddiehl.workers.dev",
+				"CONTACT_NOTIFY_TO": "diegodieh@gmail.com",
+				"CONTACT_NOTIFY_FROM": "site@rethink.ad",
+				"CONTACT_RETENTION_MONTHS": "24",
+				"PUBLIC_GTM_ID": "GTM-PMBGLB5P",
+				"PUBLIC_TURNSTILE_SITE_KEY": "",
+				// Homologação não deve ser indexada.
+				"NOINDEX": "1",
+			},
+			"observability": { "enabled": true, "head_sampling_rate": 1 },
+		},
+	},
+}

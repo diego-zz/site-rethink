@@ -1,0 +1,43 @@
+---
+/** Corpo de uma entrada da coleção Páginas (seções em blocos). */
+import Blocos from "./Blocos.astro";
+import Linhas from "./Linhas.astro";
+import type { Entrada } from "../lib/site";
+
+interface Props {
+	pagina: Entrada;
+}
+const { pagina } = Astro.props;
+const blocos = (pagina.data.conteudo ?? []) as { _type: string }[];
+const temH1 = blocos.some((b: { _type: string; titulo_pagina?: boolean }) => b._type === "hero" || (b._type === "contato" && b.titulo_pagina));
+---
+
+{
+	!temH1 && (
+		<header class="container cab-pagina">
+			<h1 class="titulo-1">
+				<Linhas texto={pagina.data.title} />
+			</h1>
+		</header>
+	)
+}
+<div {...(pagina.edit?.conteudo ?? {})}>
+	<Blocos value={blocos} />
+</div>
+{
+	blocos.length === 0 && Astro.locals.user && (
+		<p class="container aviso-admin">
+			Esta página ainda não tem seções. <a href={`/_emdash/admin/content/paginas/${pagina.data.id}`}>Editar no painel</a>
+		</p>
+	)
+}
+
+<style>
+	.cab-pagina {
+		padding-block: 72px 48px;
+	}
+	.aviso-admin {
+		padding-block: 48px;
+		color: var(--cinza);
+	}
+</style>

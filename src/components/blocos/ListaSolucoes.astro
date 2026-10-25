@@ -1,0 +1,170 @@
+---
+/** Soluções cadastradas: cards (Home) ou linhas grandes (página Soluções). */
+import Linhas from "../Linhas.astro";
+import { cachear, getSolucoes, type Dados } from "../../lib/site";
+
+interface Props {
+	value: Dados;
+}
+const { value: v } = Astro.props;
+const { solucoes, cacheHint } = await getSolucoes();
+cachear(Astro, cacheHint);
+const id = `h-${v._key}`;
+const temCab = !!(v.rotulo || v.titulo);
+---
+
+{
+	solucoes.length > 0 && (
+		<section
+			id={v.ancora || undefined}
+			aria-labelledby={temCab ? id : undefined}
+			aria-label={temCab ? undefined : "Lista de soluções"}
+			class:list={["bloco-solucoes", { "fundo-branco": !v.formato_linhas }]}
+		>
+			<div class:list={["container", v.formato_linhas && !temCab ? "solucoes--sem-cab" : "secao", "pilha-56"]}>
+				{temCab && (
+					<div class="cab-secao">
+						<div class="pilha">
+							{v.rotulo && <span class="rotulo">{v.rotulo}</span>}
+							{v.titulo && (
+								<h2 id={id} class="titulo-2">
+									<Linhas texto={v.titulo} />
+								</h2>
+							)}
+						</div>
+						{v.introducao && <p class="apoio">{v.introducao}</p>}
+					</div>
+				)}
+				{v.formato_linhas ? (
+					<div class="linhas">
+						{solucoes.map((s) => (
+							<a href={`/solucoes/${s.id}`} class="linha">
+								<span class="linha__num">{s.data.numero}</span>
+								<h3 class="display linha__nome">{s.data.title}</h3>
+								<span class="linha__texto">
+									<span>{s.data.introducao || s.data.excerpt}</span>
+									<span class="link-mono">
+										Ver solução <span aria-hidden="true">→</span>
+									</span>
+								</span>
+							</a>
+						))}
+					</div>
+				) : (
+					<div class="cards">
+						{solucoes.map((s) => (
+							<article class="card">
+								<span class="card__num">{s.data.numero}</span>
+								<h3 class="display card__nome">{s.data.title}</h3>
+								<p>{s.data.excerpt}</p>
+								<a href={`/solucoes/${s.id}`} aria-label={`Saiba mais sobre ${s.data.title}`}>
+									Saiba mais <span aria-hidden="true">→</span>
+								</a>
+							</article>
+						))}
+					</div>
+				)}
+			</div>
+		</section>
+	)
+}
+
+<style>
+	.pilha-56 {
+		display: flex;
+		flex-direction: column;
+		gap: 56px;
+	}
+	.solucoes--sem-cab {
+		padding-bottom: var(--secao);
+	}
+	.cards {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+		border-top: 1px solid var(--preto);
+	}
+	.card {
+		display: flex;
+		flex-direction: column;
+		gap: 14px;
+		padding: 32px 28px 40px 0;
+		border-bottom: 1px solid var(--linha);
+	}
+	.card__num,
+	.linha__num {
+		font-family: var(--f-mono);
+		font-size: 13px;
+		color: var(--cinza);
+	}
+	.card__nome {
+		font-size: 26px;
+		line-height: 1;
+	}
+	.card p {
+		font-size: 16px;
+	}
+	.card a {
+		margin-top: auto;
+		font-size: 15px;
+	}
+	.linhas {
+		display: flex;
+		flex-direction: column;
+		border-bottom: 1px solid var(--preto);
+	}
+	.linha {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 16px 48px;
+		align-items: flex-start;
+		padding: 48px 0;
+		border-bottom: 1px solid var(--linha);
+		color: var(--texto);
+		text-decoration: none;
+	}
+	.linha:last-child {
+		border-bottom: 0;
+	}
+	.linha__num {
+		flex: 0 0 80px;
+		font-size: 15px;
+	}
+	.linha__nome {
+		flex: 1 1 420px;
+		font-size: clamp(32px, 4vw, 52px);
+		line-height: 0.95;
+		transition: color 0.2s ease;
+	}
+	.linha:hover .linha__nome {
+		color: var(--azul);
+	}
+	.linha__texto {
+		flex: 1 1 360px;
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+		font-size: 16px;
+	}
+	@media (max-width: 720px) {
+		.pilha-56 {
+			gap: 32px;
+		}
+		.card {
+			padding: 24px 0 28px;
+		}
+		.card__nome {
+			font-size: 24px;
+		}
+		.linha {
+			padding: 32px 0;
+			gap: 12px;
+		}
+		.linha__num {
+			flex-basis: 100%;
+		}
+		.linha__nome {
+			flex-basis: 100%;
+			font-size: 30px;
+		}
+	}
+</style>

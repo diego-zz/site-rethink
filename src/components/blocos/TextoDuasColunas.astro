@@ -1,0 +1,41 @@
+---
+import { PortableText } from "emdash/ui";
+import Linhas from "../Linhas.astro";
+import { link, type Dados } from "../../lib/site";
+
+interface Props {
+	value: Dados;
+}
+const { value: v } = Astro.props;
+const url = link(v.link_url);
+const id = `h-${v._key}`;
+---
+
+<section
+	id={v.ancora || undefined}
+	aria-labelledby={v.titulo ? id : undefined}
+	class:list={["bloco-texto", { "fundo-branco": v.fundo_branco }]}
+>
+	<div class="container secao duas-colunas">
+		<div class="pilha">
+			{v.rotulo && <span class="rotulo">{v.rotulo}</span>}
+			{
+				v.titulo && (
+					<h2 id={id} class="titulo-2">
+						<Linhas texto={v.titulo} />
+					</h2>
+				)
+			}
+		</div>
+		<div class="prosa">
+			{v.texto && <PortableText value={v.texto} />}
+			{
+				v.link_texto && url && (
+					<a href={url} class="link-mono">
+						{v.link_texto} <span aria-hidden="true">→</span>
+					</a>
+				)
+			}
+		</div>
+	</div>
+</section>

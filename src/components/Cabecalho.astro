@@ -1,0 +1,295 @@
+---
+/**
+ * Barra de aviso + cabeçalho + menu mobile (tela cheia, <dialog> nativo).
+ * Itens vêm do menu "principal"; aviso e redes vêm de Dados da empresa.
+ */
+import { externo, link, urlRede, urlWhatsapp, type Dados } from "../lib/site";
+
+interface Props {
+	itens: { label: string; url: string; target?: string | null }[];
+	empresa: Dados;
+}
+const { itens, empresa } = Astro.props;
+const atual = Astro.url.pathname.replace(/\/$/, "") || "/";
+const ativo = (url: string) => url !== "/" && (atual === url || atual.startsWith(`${url}/`));
+const aviso = empresa.aviso_texto?.trim();
+const avisoLink = link(empresa.aviso_link);
+const redes = [
+	{ nome: "LinkedIn", url: urlRede(empresa.linkedin_url) },
+	{ nome: "Instagram", url: urlRede(empresa.instagram_url) },
+	{ nome: "WhatsApp", url: urlWhatsapp(empresa) },
+].filter((r) => r.url);
+const contato = itens.find((i) => i.url === "/contato")?.url ?? "/contato";
+---
+
+{
+	aviso &&
+		(avisoLink ? (
+			<a href={avisoLink} class="aviso">
+				{aviso} <span aria-hidden="true">→</span>
+			</a>
+		) : (
+			<p class="aviso">{aviso}</p>
+		))
+}
+<header class="cabecalho">
+	<div class="container cabecalho__barra">
+		<a href="/" class="cabecalho__logo" aria-label="Rethink Consultoria — início">
+			<img src="/brand/logo-preto.webp" alt="Rethink Consultoria" width="520" height="196" />
+		</a>
+		<nav aria-label="Principal" class="cabecalho__nav">
+			{
+				itens.map((i) => (
+					<a
+						href={i.url}
+						aria-current={ativo(i.url) ? "page" : undefined}
+						target={i.target || undefined}
+						rel={i.target === "_blank" ? "noopener noreferrer" : undefined}
+					>
+						{i.label}
+					</a>
+				))
+			}
+		</nav>
+		<button type="button" class="cabecalho__abrir" aria-label="Abrir menu" aria-haspopup="dialog" aria-controls="menu-mobile">
+			<span></span><span></span><span></span>
+		</button>
+	</div>
+</header>
+
+<dialog id="menu-mobile" class="menu escuro" aria-label="Menu">
+	<div class="menu__topo">
+		<a href="/" aria-label="Rethink Consultoria — início">
+			<img src="/brand/logo-branco.webp" alt="Rethink Consultoria" width="520" height="196" />
+		</a>
+		<button type="button" class="menu__fechar" aria-label="Fechar menu">
+			<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19"></path></svg>
+		</button>
+	</div>
+	<nav aria-label="Principal (mobile)" class="menu__nav">
+		{
+			itens.map((i, n) => (
+				<a href={i.url} aria-current={ativo(i.url) ? "page" : undefined}>
+					<span class="menu__item">{i.label}</span>
+					<span class="menu__num">{String(n + 1).padStart(2, "0")}</span>
+				</a>
+			))
+		}
+	</nav>
+	<div class="menu__rodape">
+		<a href={contato} class="botao">Vamos conversar <span aria-hidden="true">→</span></a>
+		{
+			redes.length > 0 && (
+				<div class="menu__redes">
+					{redes.map((r) => (
+						<a href={r.url} target={externo(r.url) ? "_blank" : undefined} rel="noopener noreferrer">
+							{r.nome}
+						</a>
+					))}
+				</div>
+			)
+		}
+	</div>
+</dialog>
+
+<script>
+	const dialog = document.getElementById("menu-mobile") as HTMLDialogElement | null;
+	const abrir = document.querySelector<HTMLButtonElement>(".cabecalho__abrir");
+	const fechar = dialog?.querySelector<HTMLButtonElement>(".menu__fechar");
+	if (dialog && abrir && fechar) {
+		abrir.addEventListener("click", () => {
+			dialog.showModal();
+			abrir.setAttribute("aria-expanded", "true");
+		});
+		fechar.addEventListener("click", () => dialog.close());
+		dialog.addEventListener("close", () => {
+			abrir.setAttribute("aria-expanded", "false");
+			abrir.focus();
+		});
+		dialog.addEventListener("click", (e) => {
+			if (e.target instanceof Element && e.target.closest("a")) dialog.close();
+		});
+		matchMedia("(min-width: 961px)").addEventListener("change", (e) => {
+			if (e.matches && dialog.open) dialog.close();
+		});
+	}
+</script>
+
+<style>
+	.aviso {
+		display: block;
+		margin: 0;
+		padding: 8px 16px;
+		background: var(--texto);
+		color: var(--branco);
+		text-align: center;
+		text-decoration: none;
+		font-family: var(--f-mono);
+		font-size: 12px;
+		letter-spacing: 0.08em;
+	}
+	a.aviso:hover {
+		color: var(--branco);
+		text-decoration: underline;
+	}
+	.cabecalho {
+		background: var(--papel);
+		border-bottom: 1px solid var(--linha);
+	}
+	.cabecalho__barra {
+		display: flex;
+		gap: 16px 40px;
+		align-items: center;
+		justify-content: space-between;
+		min-height: 76px;
+		padding-block: 14px;
+	}
+	.cabecalho__logo img {
+		width: 124px;
+		height: auto;
+	}
+	.cabecalho__nav {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px 28px;
+		font-family: var(--f-mono);
+		font-size: 13px;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+	}
+	.cabecalho__nav a {
+		color: var(--preto);
+		text-decoration: none;
+		padding-block: 6px;
+		border-bottom: 1px solid transparent;
+	}
+	.cabecalho__nav a:hover,
+	.cabecalho__nav a[aria-current="page"] {
+		border-bottom-color: var(--preto);
+	}
+	.cabecalho__abrir {
+		display: none;
+		width: 44px;
+		height: 44px;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: 6px;
+		padding: 0;
+		border: 1px solid var(--preto);
+		background: transparent;
+		cursor: pointer;
+	}
+	.cabecalho__abrir span {
+		display: block;
+		width: 20px;
+		height: 2px;
+		background: var(--preto);
+	}
+	@media (max-width: 960px) {
+		.cabecalho__nav {
+			display: none;
+		}
+		.cabecalho__abrir {
+			display: flex;
+		}
+		.cabecalho__barra {
+			min-height: 64px;
+			padding-block: 10px;
+		}
+		.cabecalho__logo img {
+			width: 98px;
+		}
+	}
+
+	.menu {
+		width: 100%;
+		max-width: none;
+		height: 100%;
+		max-height: none;
+		margin: 0;
+		padding: 0;
+		border: 0;
+		flex-direction: column;
+		overflow-y: auto;
+	}
+	.menu[open] {
+		display: flex;
+	}
+	.menu::backdrop {
+		background: var(--preto);
+	}
+	.menu__topo {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		height: 64px;
+		padding: 10px 16px;
+		border-bottom: 1px solid var(--linha-escura);
+	}
+	.menu__topo img {
+		width: 98px;
+		height: auto;
+	}
+	.menu__fechar {
+		width: 44px;
+		height: 44px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 0;
+		border: 1px solid var(--branco);
+		background: transparent;
+		color: var(--branco);
+		cursor: pointer;
+	}
+	.menu__nav {
+		display: flex;
+		flex-direction: column;
+		padding: 24px 16px 0;
+	}
+	.menu__nav a {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 12px;
+		padding: 18px 0;
+		border-bottom: 1px solid var(--texto);
+		color: var(--branco);
+		text-decoration: none;
+	}
+	.menu__item {
+		font-family: var(--f-display);
+		font-weight: 700;
+		font-size: 36px;
+		line-height: 1;
+		text-transform: uppercase;
+	}
+	.menu__nav a[aria-current="page"] .menu__item {
+		color: var(--azul-escuro);
+	}
+	.menu__num {
+		font-family: var(--f-mono);
+		font-size: 12px;
+		color: var(--muted-escuro);
+	}
+	.menu__rodape {
+		display: flex;
+		flex-direction: column;
+		gap: 24px;
+		margin-top: auto;
+		padding: 32px 16px 40px;
+	}
+	.menu__redes {
+		display: flex;
+		gap: 20px;
+		font-family: var(--f-mono);
+		font-size: 12px;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+	}
+	.menu__redes a {
+		color: var(--muted-escuro);
+		padding-block: 8px;
+	}
+</style>

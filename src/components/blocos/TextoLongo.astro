@@ -1,0 +1,143 @@
+---
+/** Texto corrido com índice lateral gerado a partir dos títulos (H2). */
+import { PortableText } from "emdash/ui";
+import { ancora, type Dados } from "../../lib/site";
+
+interface Props {
+	value: Dados;
+}
+const { value: v } = Astro.props;
+const blocos: Dados[] = Array.isArray(v.conteudo) ? v.conteudo : [];
+const textoDe = (b: Dados) => (Array.isArray(b.children) ? b.children.map((c: Dados) => c.text ?? "").join("") : "");
+type Sec = { id?: string; titulo?: string; corpo: Dados[] };
+const secoes: Sec[] = [];
+const usados = new Set<string>();
+for (const b of blocos) {
+	if (b._type === "block" && b.style === "h2") {
+		const titulo = textoDe(b);
+		let id = ancora(titulo) || `secao-${secoes.length + 1}`;
+		while (usados.has(id)) id += "-2";
+		usados.add(id);
+		secoes.push({ id, titulo, corpo: [] });
+	} else {
+		if (!secoes.length) secoes.push({ corpo: [] });
+		secoes[secoes.length - 1].corpo.push(b);
+	}
+}
+const indice = secoes.filter((s) => s.id);
+const mostrarIndice = v.mostrar_indice !== false && indice.length > 1;
+---
+
+<section class="bloco-texto-longo">
+	{
+		(v.atualizado_em || v.aviso) && (
+			<div class="container texto-longo__topo">
+				{v.atualizado_em && <span class="texto-longo__data">{v.atualizado_em}</span>}
+				{v.aviso && <p class="texto-longo__aviso">{v.aviso}</p>}
+			</div>
+		)
+	}
+	<div class="container texto-longo">
+		{
+			mostrarIndice && (
+				<nav aria-label="Nesta página" class="texto-longo__indice">
+					<span class="mono-caps">Nesta página</span>
+					{indice.map((s) => (
+						<a href={`#${s.id}`}>{s.titulo}</a>
+					))}
+				</nav>
+			)
+		}
+		<div class="texto-longo__corpo">
+			{
+				secoes.map((s) => (
+					<div id={s.id} class="texto-longo__secao">
+						{s.titulo && <h2>{s.titulo}</h2>}
+						{s.corpo.length > 0 && <PortableText value={s.corpo} />}
+					</div>
+				))
+			}
+		</div>
+	</div>
+</section>
+
+<style>
+	.texto-longo__topo {
+		display: flex;
+		flex-direction: column;
+		gap: 24px;
+		padding-top: 40px;
+	}
+	.texto-longo__data {
+		font-family: var(--f-mono);
+		font-size: 13px;
+		color: var(--cinza);
+	}
+	.texto-longo__aviso {
+		max-width: 760px;
+		padding: 16px 20px;
+		background: var(--branco);
+		border: 1px solid var(--linha);
+		font-size: 15px;
+	}
+	.texto-longo {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 48px 80px;
+		align-items: flex-start;
+		padding-block: 64px var(--secao);
+	}
+	.texto-longo__indice {
+		flex: 1 1 240px;
+		position: sticky;
+		top: 24px;
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+		padding-top: 20px;
+		border-top: 2px solid var(--preto);
+		font-size: 15px;
+	}
+	.texto-longo__indice a {
+		color: var(--preto);
+		text-decoration: none;
+	}
+	.texto-longo__indice a:hover {
+		text-decoration: underline;
+	}
+	.texto-longo__corpo {
+		flex: 3 1 560px;
+		max-width: 760px;
+		display: flex;
+		flex-direction: column;
+		gap: 40px;
+		font-size: 17px;
+	}
+	.texto-longo__secao {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+		scroll-margin-top: 24px;
+	}
+	.texto-longo__secao h2 {
+		font-size: 26px;
+		font-weight: 600;
+		line-height: 1.25;
+		color: var(--preto);
+	}
+	.texto-longo__secao :global(p),
+	.texto-longo__secao :global(ul),
+	.texto-longo__secao :global(ol) {
+		margin: 0;
+	}
+	.texto-longo__secao :global(h3) {
+		margin: 12px 0 0;
+		font-size: 20px;
+		color: var(--preto);
+	}
+	@media (max-width: 860px) {
+		.texto-longo__indice {
+			position: static;
+		}
+	}
+</style>

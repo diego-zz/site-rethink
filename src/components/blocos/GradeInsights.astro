@@ -1,0 +1,254 @@
+---
+/** Artigo em destaque, filtro por categoria (?categoria=) e paginação (?pagina=). */
+import { Image } from "emdash/ui";
+import CardInsight from "../CardInsight.astro";
+import { cachear, getInsights, metaInsight, type Dados } from "../../lib/site";
+
+interface Props {
+	value: Dados;
+}
+const { value: v } = Astro.props;
+const porPagina = Math.min(Math.max(Number(v.por_pagina) || 6, 3), 24);
+const categoria = Astro.url.searchParams.get("categoria") ?? "";
+const pagina = Math.max(1, Number.parseInt(Astro.url.searchParams.get("pagina") ?? "1", 10) || 1);
+
+const todos = await getInsights();
+cachear(Astro, todos.cacheHint, todos.cacheHintTermos);
+const categorias = todos.categorias.filter((t) => (t.count ?? 1) > 0);
+const ativa = categorias.find((c) => c.slug === categoria);
+const lista = ativa ? todos.insights.filter((e) => todos.categoriaDe(e)?.slug === ativa.slug) : todos.insights;
+
+const mostrarDestaque = !ativa && pagina === 1;
+const destaque = mostrarDestaque ? (lista.find((e) => e.data.destaque) ?? lista[0]) : undefined;
+const restantes = lista.filter((e) => e !== destaque);
+const totalPaginas = Math.max(1, Math.ceil(restantes.length / porPagina));
+const pag = Math.min(pagina, totalPaginas);
+const visiveis = restantes.slice((pag - 1) * porPagina, pag * porPagina);
+
+const href = (p: number, c = ativa?.slug) => {
+	const q = new URLSearchParams();
+	if (c) q.set("categoria", c);
+	if (p > 1) q.set("pagina", String(p));
+	const s = q.toString();
+	return `/insights${s ? `?${s}` : ""}`;
+};
+const catDestaque = destaque ? todos.categoriaDe(destaque) : undefined;
+---
+
+{
+	destaque && (
+		<section aria-label="Artigo em destaque">
+			<div class="container destaque-wrap">
+				<a href={`/insights/${destaque.id}`} class="destaque">
+					<span class="zoom destaque__img">
+						{destaque.data.capa && <Image image={destaque.data.capa} alt="" sizes="(max-width: 960px) 100vw, 60vw" priority />}
+					</span>
+					<span class="destaque__texto">
+						<span class="destaque__rotulo">Em destaque{catDestaque && ` · ${catDestaque.label}`}</span>
+						<span class="destaque__titulo">{destaque.data.title}</span>
+						{destaque.data.excerpt && <span>{destaque.data.excerpt}</span>}
+						<span class="destaque__meta">
+							{[metaInsight(destaque), destaque.data.byline?.displayName].filter(Boolean).join(" · ")}
+						</span>
+					</span>
+				</a>
+			</div>
+		</section>
+	)
+}
+
+{(visiveis.length > 0 || !destaque) && (
+<section aria-labelledby="h-todos">
+	<div class="container lista">
+		<div class="lista__cab">
+			<h2 id="h-todos" class="mono-caps lista__titulo">
+				{ativa ? `Artigos sobre ${ativa.label}` : "Todos os artigos"}
+			</h2>
+			{
+				categorias.length > 1 && (
+					<nav class="chips" aria-label="Filtrar por categoria">
+						<a href="/insights" class="chip" aria-current={!ativa ? "page" : undefined}>
+							Todas
+						</a>
+						{categorias.map((c) => (
+							<a href={href(1, c.slug)} class="chip" aria-current={ativa?.slug === c.slug ? "page" : undefined}>
+								{c.label}
+							</a>
+						))}
+					</nav>
+				)
+			}
+		</div>
+
+		{
+			visiveis.length > 0 ? (
+				<div class="grade">
+					{visiveis.map((a) => (
+						<CardInsight artigo={a} meta={metaInsight(a, todos.categoriaDe(a))} />
+					))}
+				</div>
+			) : (
+				!destaque && <p class="vazio">Os primeiros artigos estão a caminho. Enquanto isso, acompanhe a Rethink no LinkedIn.</p>
+			)
+		}
+
+		{
+			totalPaginas > 1 && (
+				<nav aria-label="Paginação" class="paginacao">
+					{pag > 1 && (
+						<a href={href(pag - 1)} aria-label="Página anterior" rel="prev">
+							←
+						</a>
+					)}
+					{Array.from({ length: totalPaginas }, (_, i) => i + 1).map((p) => (
+						<a href={href(p)} aria-current={p === pag ? "page" : undefined}>
+							{p}
+						</a>
+					))}
+					{pag < totalPaginas && (
+						<a href={href(pag + 1)} aria-label="Próxima página" rel="next">
+							→
+						</a>
+					)}
+				</nav>
+			)
+		}
+	</div>
+</section>
+)}
+
+<style>
+	.destaque-wrap {
+		padding-top: 64px;
+	}
+	.destaque {
+		display: flex;
+		flex-wrap: wrap;
+		background: var(--branco);
+		border: 1px solid var(--linha);
+		color: var(--texto);
+		text-decoration: none;
+	}
+	.destaque__img {
+		flex: 1 1 560px;
+		min-height: 440px;
+		position: relative;
+	}
+	.destaque__img :global(img) {
+		position: absolute;
+		inset: 0;
+	}
+	.destaque__texto {
+		flex: 1 1 400px;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		gap: 16px;
+		padding: 48px;
+	}
+	.destaque__rotulo {
+		font-family: var(--f-mono);
+		font-size: 12px;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		color: var(--azul);
+	}
+	.destaque__titulo {
+		font-size: 34px;
+		line-height: 1.15;
+		font-weight: 600;
+		color: var(--preto);
+	}
+	.destaque:hover .destaque__titulo {
+		text-decoration: underline;
+	}
+	.destaque__meta {
+		font-family: var(--f-mono);
+		font-size: 12px;
+		color: var(--cinza);
+	}
+	.lista {
+		display: flex;
+		flex-direction: column;
+		gap: 40px;
+		padding-block: 64px 96px;
+	}
+	.lista__cab {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 16px 32px;
+		align-items: center;
+		justify-content: space-between;
+		padding-top: 32px;
+		border-top: 1px solid var(--preto);
+	}
+	.lista__titulo {
+		font-weight: 500;
+		font-size: 13px;
+		letter-spacing: 0.12em;
+		color: var(--preto);
+	}
+	.grade {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+		gap: 56px 32px;
+	}
+	.vazio {
+		font-size: 18px;
+	}
+	.paginacao {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+		justify-content: center;
+		padding-top: 24px;
+		font-family: var(--f-mono);
+		font-size: 14px;
+	}
+	.paginacao a {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 44px;
+		height: 44px;
+		border: 1px solid var(--preto);
+		color: var(--preto);
+		text-decoration: none;
+	}
+	.paginacao a[aria-current="page"],
+	.paginacao a:hover {
+		background: var(--preto);
+		color: var(--branco);
+	}
+	@media (max-width: 720px) {
+		.destaque-wrap {
+			padding-top: 32px;
+		}
+		.destaque__img {
+			min-height: 220px;
+		}
+		.destaque__texto {
+			padding: 24px 20px;
+		}
+		.destaque__titulo {
+			font-size: 26px;
+		}
+		.lista {
+			padding-block: 40px 64px;
+		}
+		.grade {
+			grid-template-columns: 1fr;
+			gap: 40px;
+		}
+		.chips {
+			flex-wrap: nowrap;
+			overflow-x: auto;
+			margin-inline: calc(-1 * var(--gutter));
+			padding-inline: var(--gutter);
+			padding-bottom: 4px;
+		}
+		.chip {
+			flex: 0 0 auto;
+		}
+	}
+</style>

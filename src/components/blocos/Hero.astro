@@ -1,0 +1,189 @@
+---
+/**
+ * Abertura da página (h1). Com foto: layout dividido (Home, 404).
+ * Sem foto: título grande com trilha (páginas internas).
+ */
+import { Image } from "emdash/ui";
+import Linhas from "../Linhas.astro";
+import Trilha from "../Trilha.astro";
+import { link, umaLinha, type Dados } from "../../lib/site";
+
+interface Props {
+	value: Dados;
+}
+const { value: v } = Astro.props;
+const cta1 = v.cta1_texto && link(v.cta1_link) ? { t: v.cta1_texto, u: link(v.cta1_link)! } : undefined;
+const cta2 = v.cta2_texto && link(v.cta2_link) ? { t: v.cta2_texto, u: link(v.cta2_link)! } : undefined;
+const nomeTrilha = (v.rotulo?.trim() || umaLinha(v.titulo)).replace(/\.$/, "");
+const comFoto = !!v.imagem;
+---
+
+{
+	comFoto ? (
+		<section class:list={["hero hero--foto", { escuro: v.fundo_escuro }]}>
+			<div class="hero__texto">
+				{v.mostrar_trilha && <Trilha itens={[{ nome: nomeTrilha }]} />}
+				{v.rotulo && <span class="hero__rotulo">{v.rotulo}</span>}
+				<h1 class="titulo-1 hero__titulo">
+					<Linhas texto={v.titulo} />
+				</h1>
+				{v.subtitulo && <p class="lead">{v.subtitulo}</p>}
+				{(cta1 || cta2) && (
+					<div class="botoes">
+						{cta1 && (
+							<a href={cta1.u} class="botao">
+								{cta1.t} <span aria-hidden="true">→</span>
+							</a>
+						)}
+						{cta2 && (
+							<a href={cta2.u} class="botao botao--contorno">
+								{cta2.t}
+							</a>
+						)}
+					</div>
+				)}
+				{v.assinatura && <p class="hero__assinatura">{v.assinatura}</p>}
+			</div>
+			<div class="hero__foto">
+				<Image image={v.imagem} class="cobrir" priority sizes="(max-width: 960px) 100vw, 45vw" />
+				{v.legenda_imagem && <span class="hero__legenda">{v.legenda_imagem}</span>}
+			</div>
+		</section>
+	) : (
+		<section class:list={["hero hero--simples", { escuro: v.fundo_escuro }]}>
+			<div class="container hero__simples">
+				{v.mostrar_trilha && <Trilha itens={[{ nome: nomeTrilha }]} />}
+				{v.rotulo && <span class="rotulo hero__rotulo-simples">{v.rotulo}</span>}
+				<h1 class:list={["titulo-1", { "hero__sem-rotulo": !v.rotulo }]}>
+					<Linhas texto={v.titulo} />
+				</h1>
+				{v.subtitulo && <p class="lead">{v.subtitulo}</p>}
+				{(cta1 || cta2) && (
+					<div class="botoes">
+						{cta1 && (
+							<a href={cta1.u} class="botao">
+								{cta1.t} <span aria-hidden="true">→</span>
+							</a>
+						)}
+						{cta2 && (
+							<a href={cta2.u} class="botao botao--contorno">
+								{cta2.t}
+							</a>
+						)}
+					</div>
+				)}
+			</div>
+		</section>
+	)
+}
+
+<style>
+	.hero--simples:not(.escuro) {
+		border-bottom: 1px solid var(--preto);
+	}
+	.hero__simples {
+		display: flex;
+		flex-direction: column;
+		gap: 28px;
+		padding-block: 24px 96px;
+	}
+	.hero__rotulo-simples,
+	.hero__sem-rotulo {
+		padding-top: 48px;
+	}
+	.hero--foto {
+		display: flex;
+		flex-wrap: wrap;
+	}
+	.hero__texto {
+		flex: 1 1 620px;
+		display: flex;
+		flex-direction: column;
+		gap: 32px;
+		justify-content: flex-end;
+		padding: 112px clamp(24px, 4vw, 64px) 80px clamp(24px, 5.5vw, 80px);
+	}
+	.hero__texto :global(.trilha) {
+		margin-top: -88px;
+		margin-bottom: auto;
+	}
+	.hero__rotulo {
+		font-family: var(--f-mono);
+		font-size: 13px;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		color: var(--cinza);
+	}
+	.escuro .hero__rotulo {
+		color: var(--muted-escuro);
+	}
+	.hero--foto .hero__titulo {
+		font-size: clamp(64px, 9.5vw, 156px);
+		line-height: 0.86;
+	}
+	.hero__assinatura {
+		padding-top: 20px;
+		border-top: 1px solid var(--linha);
+		font-family: var(--f-mono);
+		font-size: 12px;
+		letter-spacing: 0.3em;
+		text-transform: uppercase;
+		color: var(--cinza);
+	}
+	.escuro .hero__assinatura {
+		border-top-color: var(--linha-escura);
+		color: var(--muted-escuro);
+	}
+	.hero__foto {
+		flex: 1 1 440px;
+		min-height: 640px;
+		position: relative;
+		background: var(--texto);
+	}
+	.hero__foto :global(img) {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+	.hero__legenda {
+		position: absolute;
+		left: 20px;
+		bottom: 20px;
+		padding: 6px 10px;
+		background: rgb(0 0 0 / 0.55);
+		color: var(--branco);
+		font-family: var(--f-mono);
+		font-size: 11px;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+	}
+	@media (max-width: 720px) {
+		.hero__simples {
+			padding-block: 16px 56px;
+			gap: 20px;
+		}
+		.hero__rotulo-simples,
+		.hero__sem-rotulo {
+			padding-top: 24px;
+		}
+		.hero__texto {
+			padding: 56px 16px 48px;
+			gap: 24px;
+		}
+		.hero__texto :global(.trilha) {
+			margin-top: -40px;
+		}
+		.hero--foto .hero__titulo {
+			font-size: clamp(56px, 18vw, 80px);
+		}
+		.hero__foto {
+			min-height: 360px;
+		}
+		.hero__assinatura {
+			letter-spacing: 0.2em;
+			font-size: 11px;
+		}
+	}
+</style>

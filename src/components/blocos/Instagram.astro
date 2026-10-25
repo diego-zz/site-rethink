@@ -1,0 +1,92 @@
+---
+/** Últimos posts do Instagram (atualizados pelo cron, guardados no KV). */
+import { env } from "cloudflare:workers";
+import { cachear, getEmpresa, link, type Dados } from "../../lib/site";
+import { lerPosts } from "../../lib/instagram";
+
+interface Props {
+	value: Dados;
+}
+const { value: v } = Astro.props;
+const { empresa, cacheHint } = await getEmpresa();
+cachear(Astro, cacheHint);
+const posts = await lerPosts((env as unknown as { INSTAGRAM?: KVNamespace }).INSTAGRAM);
+const perfil = empresa.instagram_perfil && !/\[/.test(empresa.instagram_perfil) ? empresa.instagram_perfil : "";
+const url = link(empresa.instagram_url);
+const id = `h-${v._key}`;
+---
+
+{
+	posts.length > 0 && (
+		<section aria-labelledby={id}>
+			<div class="container bloco">
+				<div class="cab">
+					<h2 id={id} class="mono-caps titulo">
+						{[v.rotulo || "No Instagram", perfil].filter(Boolean).join(" · ")}
+					</h2>
+					{url && v.link_texto && (
+						<a href={url} class="link-mono" target="_blank" rel="noopener noreferrer">
+							{v.link_texto} <span aria-hidden="true">→</span>
+						</a>
+					)}
+				</div>
+				<ul class="faixa">
+					{posts.map((p, i) => (
+						<li>
+							<a href={p.link} class="zoom" target="_blank" rel="noopener noreferrer" aria-label={`Post do Instagram ${i + 1}${p.legenda ? `: ${p.legenda.slice(0, 80)}` : ""}`}>
+								<img src={p.imagem} alt="" width="240" height="240" loading="lazy" decoding="async" />
+							</a>
+						</li>
+					))}
+				</ul>
+			</div>
+		</section>
+	)
+}
+
+<style>
+	.bloco {
+		display: flex;
+		flex-direction: column;
+		gap: 24px;
+		padding-block: 48px var(--secao);
+	}
+	.cab {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 12px 32px;
+		justify-content: space-between;
+		align-items: center;
+	}
+	.titulo {
+		font-weight: 500;
+		font-size: 13px;
+		letter-spacing: 0.12em;
+		color: var(--preto);
+	}
+	.faixa {
+		display: flex;
+		gap: 16px;
+		overflow-x: auto;
+		padding: 0 0 8px;
+		list-style: none;
+		scroll-snap-type: x mandatory;
+	}
+	.faixa li {
+		flex: 0 0 240px;
+		scroll-snap-align: start;
+	}
+	.faixa a {
+		display: block;
+		width: 240px;
+		height: 240px;
+	}
+	@media (max-width: 720px) {
+		.faixa li,
+		.faixa a {
+			flex-basis: 160px;
+			width: 160px;
+			height: 160px;
+		}
+	}
+</style>

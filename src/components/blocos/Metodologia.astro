@@ -1,0 +1,135 @@
+---
+import Linhas from "../Linhas.astro";
+import type { Dados } from "../../lib/site";
+
+interface Props {
+	value: Dados;
+}
+const { value: v } = Astro.props;
+const etapas: Dados[] = Array.isArray(v.etapas) ? v.etapas : [];
+const id = `h-${v._key}`;
+const num = (i: number) => String(i + 1).padStart(2, "0");
+---
+
+<section id={v.formato_linhas ? "metodologia" : undefined} aria-labelledby={v.titulo ? id : undefined} class="bloco-metodo">
+	<div class="container secao pilha-48">
+		<div class:list={[v.formato_linhas ? "cab-secao" : "pilha"]}>
+			<div class="pilha">
+				{v.rotulo && <span class="rotulo">{v.rotulo}</span>}
+				{
+					v.titulo && (
+						<h2 id={id} class="titulo-2">
+							<Linhas texto={v.titulo} />
+						</h2>
+					)
+				}
+			</div>
+			{v.introducao && <p class:list={["apoio", { "apoio--largo": !v.formato_linhas }]}>{v.introducao}</p>}
+		</div>
+		{
+			v.formato_linhas ? (
+				<ol class="etapas-linhas">
+					{etapas.map((e, i) => (
+						<li>
+							<span class="etapa__num etapa__num--grande">{num(i)}</span>
+							<strong class="display etapa__nome-linha">{e.titulo}</strong>
+							<span class="etapa__desc">{e.descricao}</span>
+						</li>
+					))}
+				</ol>
+			) : (
+				<ol class="etapas">
+					{etapas.map((e, i) => (
+						<li>
+							<span class="etapa__num">{num(i)}</span>
+							<strong class="etapa__nome">{e.titulo}</strong>
+							<span class="etapa__desc">{e.descricao}</span>
+						</li>
+					))}
+				</ol>
+			)
+		}
+	</div>
+</section>
+
+<style>
+	.pilha-48 {
+		display: flex;
+		flex-direction: column;
+		gap: 48px;
+	}
+	.apoio--largo {
+		max-width: 640px;
+	}
+	ol {
+		padding: 0;
+		list-style: none;
+	}
+	.etapas {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+		gap: 24px;
+	}
+	.etapas li {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+		padding-top: 20px;
+		border-top: 2px solid var(--preto);
+	}
+	.etapa__num {
+		font-family: var(--f-mono);
+		font-size: 40px;
+		line-height: 1;
+		color: var(--preto);
+	}
+	.etapa__nome {
+		font-size: 19px;
+		color: var(--preto);
+	}
+	.etapa__desc {
+		font-size: 15px;
+	}
+	.etapas-linhas {
+		display: flex;
+		flex-direction: column;
+		border-top: 1px solid var(--preto);
+	}
+	.etapas-linhas li {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 16px 32px;
+		align-items: baseline;
+		padding: 32px 0;
+		border-bottom: 1px solid var(--linha);
+	}
+	.etapa__num--grande {
+		flex: 0 0 120px;
+		font-size: 48px;
+	}
+	.etapa__nome-linha {
+		flex: 1 1 280px;
+		font-size: 28px;
+		line-height: 1;
+	}
+	.etapas-linhas .etapa__desc {
+		flex: 2 1 420px;
+		font-size: 16px;
+	}
+	@media (max-width: 720px) {
+		.pilha-48 {
+			gap: 32px;
+		}
+		.etapas-linhas li {
+			padding: 24px 0;
+			gap: 10px;
+		}
+		.etapa__num--grande {
+			flex-basis: 100%;
+			font-size: 32px;
+		}
+		.etapa__nome-linha {
+			font-size: 24px;
+		}
+	}
+</style>

@@ -1,0 +1,100 @@
+---
+import { Image } from "emdash/ui";
+import type { Entrada } from "../lib/site";
+
+interface Props {
+	artigo: Entrada;
+	meta: string;
+	/** "linha": card da Home com borda superior e "Ler artigo". */
+	variante?: "grade" | "linha" | "texto";
+}
+const { artigo, meta, variante = "grade" } = Astro.props;
+const url = `/insights/${artigo.id}`;
+---
+
+<article class:list={["card-ins", `card-ins--${variante}`]}>
+	{
+		variante !== "texto" && (
+			<a href={url} class="zoom card-ins__img" tabindex="-1" aria-hidden="true">
+				{artigo.data.capa && <Image image={artigo.data.capa} alt="" sizes="(max-width: 720px) 100vw, 400px" />}
+			</a>
+		)
+	}
+	<span class="card-ins__meta">{meta}</span>
+	<h3 class="card-ins__titulo"><a href={url}>{artigo.data.title}</a></h3>
+	{variante !== "texto" && artigo.data.excerpt && <p class="card-ins__resumo">{artigo.data.excerpt}</p>}
+	{variante === "linha" && <a href={url} class="card-ins__ler" aria-hidden="true" tabindex="-1">Ler artigo →</a>}
+</article>
+
+<style>
+	.card-ins {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+		position: relative;
+	}
+	.card-ins--linha,
+	.card-ins--texto {
+		padding-top: 20px;
+		border-top: 1px solid var(--preto);
+	}
+	.card-ins--texto {
+		gap: 10px;
+	}
+	.card-ins__img {
+		height: 240px;
+	}
+	.card-ins--linha .card-ins__img {
+		height: 220px;
+	}
+	.card-ins__img :global(img) {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+	.card-ins__meta {
+		font-family: var(--f-mono);
+		font-size: 12px;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--cinza);
+	}
+	.card-ins__titulo {
+		font-size: 22px;
+		line-height: 1.3;
+		font-weight: 600;
+	}
+	.card-ins--texto .card-ins__titulo {
+		font-size: 21px;
+	}
+	.card-ins__titulo a {
+		color: var(--preto);
+		text-decoration: none;
+	}
+	.card-ins__titulo a::after {
+		content: "";
+		position: absolute;
+		inset: 0;
+	}
+	.card-ins:hover .card-ins__titulo a {
+		text-decoration: underline;
+	}
+	.card-ins:hover :global(.zoom img) {
+		transform: scale(1.04);
+	}
+	.card-ins__resumo {
+		font-size: 15px;
+	}
+	.card-ins__ler {
+		font-size: 15px;
+	}
+	@media (max-width: 720px) {
+		.card-ins__img,
+		.card-ins--linha .card-ins__img {
+			height: 200px;
+		}
+		.card-ins__titulo {
+			font-size: 20px;
+		}
+	}
+</style>

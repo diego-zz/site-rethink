@@ -1,0 +1,216 @@
+---
+/**
+ * Aviso de cookies (LGPD) + Google Tag Manager com Consent Mode v2.
+ * O GTM só é carregado depois que o visitante aceita alguma categoria
+ * (modo básico). GA4 e mídia são configurados dentro do contêiner do GTM.
+ */
+interface Props {
+	gtmId?: string;
+}
+const gtmId = Astro.props.gtmId?.trim();
+---
+
+{
+	gtmId && (
+		<>
+			<script is:inline define:vars={{ gtmId }}>
+				window.dataLayer = window.dataLayer || [];
+				function gtag() {
+					dataLayer.push(arguments);
+				}
+				window.gtag = gtag;
+				var negado = "denied";
+				gtag("consent", "default", {
+					ad_storage: negado,
+					ad_user_data: negado,
+					ad_personalization: negado,
+					analytics_storage: negado,
+					functionality_storage: "granted",
+					security_storage: "granted",
+					wait_for_update: 500,
+				});
+				gtag("set", "ads_data_redaction", true);
+				window.__rethinkGtm = function () {
+					if (window.__rethinkGtmOn) return;
+					window.__rethinkGtmOn = true;
+					dataLayer.push({ "gtm.start": Date.now(), event: "gtm.js" });
+					var s = document.createElement("script");
+					s.async = true;
+					s.src = "https://www.googletagmanager.com/gtm.js?id=" + encodeURIComponent(gtmId);
+					document.head.appendChild(s);
+				};
+				try {
+					var c = JSON.parse(localStorage.getItem("rethink-consentimento") || "null");
+					if (c && c.v === 1) {
+						var g = function (b) {
+							return b ? "granted" : negado;
+						};
+						gtag("consent", "update", {
+							analytics_storage: g(c.analise),
+							ad_storage: g(c.marketing),
+							ad_user_data: g(c.marketing),
+							ad_personalization: g(c.marketing),
+						});
+						if (c.analise || c.marketing) window.__rethinkGtm();
+					}
+				} catch (e) {}
+			</script>
+		</>
+	)
+}
+
+<section class="cookies" aria-label="Aviso de cookies" hidden data-cookies>
+	<div class="cookies__caixa">
+		<p class="cookies__texto">
+			Usamos cookies para medir a audiência e melhorar o site. Você escolhe o que autorizar — veja a
+			<a href="/privacidade">Política de Privacidade</a>.
+		</p>
+		<form class="cookies__opcoes" hidden data-cookies-opcoes>
+			<label><input type="checkbox" checked disabled /> Essenciais (sempre ativos)</label>
+			<label><input type="checkbox" name="analise" /> Métricas de audiência</label>
+			<label><input type="checkbox" name="marketing" /> Marketing e mídia</label>
+		</form>
+		<div class="cookies__acoes">
+			<button type="button" class="botao" data-cookies-aceitar>Aceitar</button>
+			<button type="button" class="botao botao--contorno" data-cookies-recusar>Recusar</button>
+			<button type="button" class="cookies__personalizar" data-cookies-personalizar aria-expanded="false">Personalizar</button>
+		</div>
+	</div>
+</section>
+
+<script>
+	const CHAVE = "rethink-consentimento";
+	type Escolha = { v: 1; analise: boolean; marketing: boolean; em: string };
+	const w = window as unknown as {
+		gtag?: (...a: unknown[]) => void;
+		__rethinkGtm?: () => void;
+	};
+	const caixa = document.querySelector<HTMLElement>("[data-cookies]");
+	const opcoes = document.querySelector<HTMLFormElement>("[data-cookies-opcoes]");
+	const personalizar = document.querySelector<HTMLButtonElement>("[data-cookies-personalizar]");
+
+	function ler(): Escolha | null {
+		try {
+			const c = JSON.parse(localStorage.getItem(CHAVE) ?? "null");
+			return c && c.v === 1 ? c : null;
+		} catch {
+			return null;
+		}
+	}
+
+	function salvar(analise: boolean, marketing: boolean) {
+		const escolha: Escolha = { v: 1, analise, marketing, em: new Date().toISOString() };
+		try {
+			localStorage.setItem(CHAVE, JSON.stringify(escolha));
+		} catch {
+			/* navegação privada: vale só para esta visita */
+		}
+		const g = (b: boolean) => (b ? "granted" : "denied");
+		w.gtag?.("consent", "update", {
+			analytics_storage: g(analise),
+			ad_storage: g(marketing),
+			ad_user_data: g(marketing),
+			ad_personalization: g(marketing),
+		});
+		if (analise || marketing) w.__rethinkGtm?.();
+		if (caixa) caixa.hidden = true;
+	}
+
+	function mostrar() {
+		if (!caixa) return;
+		const atual = ler();
+		if (opcoes && atual) {
+			(opcoes.elements.namedItem("analise") as HTMLInputElement).checked = atual.analise;
+			(opcoes.elements.namedItem("marketing") as HTMLInputElement).checked = atual.marketing;
+		}
+		caixa.hidden = false;
+	}
+
+	if (!ler()) mostrar();
+
+	document.querySelector("[data-cookies-aceitar]")?.addEventListener("click", () => {
+		if (opcoes && !opcoes.hidden) {
+			const f = opcoes.elements;
+			salvar((f.namedItem("analise") as HTMLInputElement).checked, (f.namedItem("marketing") as HTMLInputElement).checked);
+		} else {
+			salvar(true, true);
+		}
+	});
+	document.querySelector("[data-cookies-recusar]")?.addEventListener("click", () => salvar(false, false));
+	personalizar?.addEventListener("click", () => {
+		if (!opcoes) return;
+		opcoes.hidden = !opcoes.hidden;
+		personalizar.setAttribute("aria-expanded", String(!opcoes.hidden));
+		const aceitar = document.querySelector<HTMLButtonElement>("[data-cookies-aceitar]");
+		if (aceitar) aceitar.textContent = opcoes.hidden ? "Aceitar" : "Salvar escolhas";
+	});
+	document.querySelectorAll("[data-abrir-cookies]").forEach((b) => b.addEventListener("click", mostrar));
+</script>
+
+<style>
+	.cookies {
+		position: fixed;
+		left: 16px;
+		right: 16px;
+		bottom: 16px;
+		z-index: 90;
+		display: flex;
+		justify-content: center;
+		pointer-events: none;
+	}
+	.cookies[hidden] {
+		display: none;
+	}
+	.cookies__caixa {
+		pointer-events: auto;
+		width: min(100%, 760px);
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+		padding: 24px;
+		background: var(--branco);
+		border: 1px solid var(--preto);
+		box-shadow: 0 12px 40px rgb(0 0 0 / 0.12);
+		font-size: 15px;
+	}
+	.cookies__opcoes {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px 24px;
+		font-size: 14px;
+	}
+	.cookies__opcoes[hidden] {
+		display: none;
+	}
+	.cookies__opcoes label {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+		min-height: 32px;
+	}
+	.cookies__opcoes input {
+		width: 18px;
+		height: 18px;
+		accent-color: var(--preto);
+	}
+	.cookies__acoes {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 12px;
+		align-items: center;
+	}
+	.cookies__acoes .botao {
+		min-height: 44px;
+		padding: 0 22px;
+	}
+	.cookies__personalizar {
+		min-height: 44px;
+		padding: 0 8px;
+		border: 0;
+		background: none;
+		color: var(--azul);
+		font: inherit;
+		text-decoration: underline;
+		cursor: pointer;
+	}
+</style>

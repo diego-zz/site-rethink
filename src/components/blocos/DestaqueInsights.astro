@@ -1,0 +1,63 @@
+---
+import CardInsight from "../CardInsight.astro";
+import Linhas from "../Linhas.astro";
+import { cachear, getInsights, metaInsight, type Dados } from "../../lib/site";
+
+interface Props {
+	value: Dados;
+}
+const { value: v } = Astro.props;
+const qtd = Number(v.quantidade) || 3;
+const { insights, categoriaDe, cacheHint, cacheHintTermos } = await getInsights({ limite: qtd });
+cachear(Astro, cacheHint, cacheHintTermos);
+const id = `h-${v._key}`;
+---
+
+{
+	insights.length > 0 && (
+		<section id="insights" aria-labelledby={id}>
+			<div class="container bloco">
+				<div class="cab-secao">
+					<div class="pilha">
+						{v.rotulo && <span class="rotulo">{v.rotulo}</span>}
+						<h2 id={id} class="titulo-2">
+							<Linhas texto={v.titulo || "Insights"} />
+						</h2>
+					</div>
+					{v.introducao && <p class="apoio">{v.introducao}</p>}
+				</div>
+				<div class="grade">
+					{insights.slice(0, qtd).map((a) => (
+						<CardInsight artigo={a} meta={metaInsight(a, categoriaDe(a))} variante="linha" />
+					))}
+				</div>
+				<a href="/insights" class="link-mono">
+					Todos os insights <span aria-hidden="true">→</span>
+				</a>
+			</div>
+		</section>
+	)
+}
+
+<style>
+	.bloco {
+		display: flex;
+		flex-direction: column;
+		gap: 40px;
+		padding-block: var(--secao) 64px;
+	}
+	.grade {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+		gap: 32px;
+	}
+	@media (max-width: 720px) {
+		.bloco {
+			gap: 28px;
+		}
+		.grade {
+			grid-template-columns: 1fr;
+			gap: 40px;
+		}
+	}
+</style>

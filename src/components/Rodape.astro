@@ -1,0 +1,169 @@
+---
+/** Rodapé: menus "rodape" e "legal" + canais de Dados da empresa. */
+import { externo, marcador, urlRede, urlWhatsapp, type Dados } from "../lib/site";
+
+type Item = { label: string; url: string; target?: string | null };
+interface Props {
+	itens: Item[];
+	legais: Item[];
+	empresa: Dados;
+}
+const { itens, legais, empresa } = Astro.props;
+const redes = [
+	{ nome: "LinkedIn", url: urlRede(empresa.linkedin_url) },
+	{ nome: "Instagram", url: urlRede(empresa.instagram_url) },
+	{ nome: "WhatsApp", url: urlWhatsapp(empresa) },
+].filter((r) => r.url);
+const email = !marcador(empresa.email) ? String(empresa.email).trim() : undefined;
+const cidade = [empresa.cidade, empresa.uf].filter(Boolean).join("/");
+const ano = new Date().getFullYear();
+const cnpj = !marcador(empresa.cnpj) ? empresa.cnpj : undefined;
+---
+
+<footer class="rodape escuro">
+	<div class="container rodape__corpo">
+		<div class="rodape__topo">
+			<a href="/" aria-label="Rethink Consultoria — início" class="rodape__logo">
+				<img src="/brand/logo-branco.webp" alt="Rethink Consultoria" width="520" height="196" loading="lazy" />
+			</a>
+			<div class="rodape__colunas">
+				{
+					itens.length > 0 && (
+						<nav aria-label="Rodapé — empresa">
+							<span class="mono-caps">Rethink</span>
+							{itens.map((i) => (
+								<a href={i.url}>{i.label}</a>
+							))}
+						</nav>
+					)
+				}
+				{
+					redes.length > 0 && (
+						<nav aria-label="Rodapé — redes">
+							<span class="mono-caps">Redes</span>
+							{redes.map((r) => (
+								<a href={r.url} target={externo(r.url) ? "_blank" : undefined} rel="noopener noreferrer">
+									{r.nome}
+								</a>
+							))}
+						</nav>
+					)
+				}
+				<div>
+					<span class="mono-caps">Contato</span>
+					<a href="/contato">Fale conosco</a>
+					{email && <a href={`mailto:${email}`}>{email}</a>}
+					{cidade && <span>{cidade}</span>}
+				</div>
+			</div>
+		</div>
+		<div class="rodape__base">
+			<span>© {ano} {empresa.title || "Rethink Consultoria"}{cnpj && ` · CNPJ ${cnpj}`}</span>
+			{
+				legais.length > 0 && (
+					<span class="rodape__legais">
+						{legais.map((i) => (
+							<a href={i.url}>{i.label}</a>
+						))}
+						<button type="button" data-abrir-cookies>Preferências de cookies</button>
+					</span>
+				)
+			}
+		</div>
+	</div>
+</footer>
+
+<style>
+	.rodape {
+		color: var(--linha);
+		border-top: 1px solid var(--linha-escura);
+	}
+	.rodape__corpo {
+		display: flex;
+		flex-direction: column;
+		gap: 48px;
+		padding-block: 72px 40px;
+	}
+	.rodape__topo {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 40px 64px;
+		justify-content: space-between;
+	}
+	.rodape__logo img {
+		width: 246px;
+		height: auto;
+	}
+	.rodape__colunas {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+		gap: 32px;
+		flex: 1 1 520px;
+		max-width: 720px;
+		font-size: 15px;
+	}
+	.rodape__colunas > * {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+	}
+	.rodape__colunas a {
+		color: var(--branco);
+		text-decoration: none;
+	}
+	.rodape__colunas a:hover {
+		text-decoration: underline;
+	}
+	.rodape__base {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 12px 32px;
+		justify-content: space-between;
+		padding-top: 20px;
+		border-top: 1px solid var(--linha-escura);
+		font-family: var(--f-mono);
+		font-size: 12px;
+		color: var(--muted-escuro);
+	}
+	.rodape__legais {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px 24px;
+	}
+	.rodape__base a,
+	.rodape__base button {
+		color: var(--muted-escuro);
+		font: inherit;
+	}
+	.rodape__base button {
+		padding: 0;
+		border: 0;
+		background: none;
+		text-decoration: underline;
+		cursor: pointer;
+	}
+	@media (max-width: 720px) {
+		.rodape__corpo {
+			padding-block: 56px 32px;
+			gap: 36px;
+		}
+		.rodape__logo img {
+			width: 190px;
+		}
+		.rodape__colunas {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: 28px 16px;
+			flex-basis: 100%;
+		}
+		.rodape__colunas a {
+			padding-block: 6px;
+		}
+		.rodape__colunas > * {
+			gap: 4px;
+		}
+		.rodape__base {
+			flex-direction: column;
+			font-size: 11px;
+		}
+	}
+</style>
