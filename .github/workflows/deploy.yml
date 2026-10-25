@@ -28,10 +28,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v5
         with:
           node-version-file: .nvmrc
-      - run: corepack enable
+          cache: pnpm
       - run: pnpm install --frozen-lockfile
       - name: Seed do CMS
         run: pnpm seed:validate
@@ -50,10 +51,11 @@ jobs:
       url: https://rethink-ad-site-preview.ddiehl.workers.dev
     steps:
       - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v5
         with:
           node-version-file: .nvmrc
-      - run: corepack enable
+          cache: pnpm
       - run: pnpm install --frozen-lockfile
       - name: Imagens iniciais (bucket rethink-ad-assets)
         run: pnpm seed:assets
@@ -70,10 +72,11 @@ jobs:
       url: https://www.rethink.ad
     steps:
       - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v5
         with:
           node-version-file: .nvmrc
-      - run: corepack enable
+          cache: pnpm
       - run: pnpm install --frozen-lockfile
       - name: Deploy em produção
         run: pnpm deploy:production
