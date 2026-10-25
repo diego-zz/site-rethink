@@ -75,12 +75,11 @@ Recursos já criados na conta Cloudflare `1aa4e3b1c5929cd8f5acddd2b6b3f012`: D1,
 
 ### 1. Repositório no GitHub
 
-1. Crie um repositório **privado** `rethink-ad-site` em github.com/new (sem README).
-2. Na pasta do projeto:
-   ```bash
-   git remote add origin git@github.com:<sua-conta>/rethink-ad-site.git
-   git push -u origin main
-   ```
+Repositório oficial: https://github.com/diego-zz/site-rethink (já configurado como `origin`). Na pasta do projeto:
+
+```bash
+git push -u origin main
+```
 
 ### 2. Token da Cloudflare para o deploy
 
