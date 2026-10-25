@@ -27,10 +27,10 @@ jobs:
     name: Validar
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
-          node-version: 22
+          node-version-file: .nvmrc
       - run: corepack enable
       - run: pnpm install --frozen-lockfile
       - name: Seed do CMS
@@ -49,10 +49,10 @@ jobs:
       name: preview
       url: https://rethink-ad-site-preview.ddiehl.workers.dev
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
-          node-version: 22
+          node-version-file: .nvmrc
       - run: corepack enable
       - run: pnpm install --frozen-lockfile
       - name: Imagens iniciais (bucket rethink-ad-assets)
@@ -69,10 +69,10 @@ jobs:
       name: production
       url: https://www.rethink.ad
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
-          node-version: 22
+          node-version-file: .nvmrc
       - run: corepack enable
       - run: pnpm install --frozen-lockfile
       - name: Deploy em produção
