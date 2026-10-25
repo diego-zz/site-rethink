@@ -12,11 +12,10 @@ cachear(Astro, cacheHint);
 const limite = Number(v.limite) > 0 ? Number(v.limite) : 8;
 const lista = clientes.filter((c) => c.data.logo).slice(0, limite);
 const id = `h-${v._key}`;
-const admin = !!Astro.locals.user;
 ---
 
 {
-	lista.length > 0 ? (
+	lista.length > 0 && (
 		<section aria-labelledby={id} class="logos">
 			<div class="container logos__corpo">
 				<h2 id={id} class="mono-caps logos__titulo">
@@ -41,15 +40,6 @@ const admin = !!Astro.locals.user;
 				</ul>
 			</div>
 		</section>
-	) : (
-		admin && (
-			<section class="container logos__aviso">
-				<p>
-					<strong>Grade de logos oculta:</strong> nenhum cliente com logo e “uso autorizado” marcado.
-					<a href="/_emdash/admin/content/clientes">Cadastrar clientes</a>
-				</p>
-			</section>
-		)
 	)
 }
 
@@ -100,11 +90,6 @@ const admin = !!Astro.locals.user;
 	.logos__grade li:hover :global(img) {
 		filter: none;
 		opacity: 1;
-	}
-	.logos__aviso {
-		padding-block: 24px;
-		font-size: 14px;
-		color: var(--cinza);
 	}
 	@media (max-width: 720px) {
 		.logos__corpo {
